@@ -98,9 +98,9 @@ class EditDataSplits(object):
             EditDataSplits
         """
         # load free words
-        with codecs.open(join(data_dir, 'free.txt'), 'r', encoding='utf-8') as f:
-            free = [line.strip().lower() for line in f]
-            free_set = set(free)
+        # with codecs.open(join(data_dir, 'free.txt'), 'r', encoding='utf-8') as f:
+        #    free = [line.strip().lower() for line in f]
+        #    free_set = set(free)
 
         def examples_from_file(path):
             """Return list[EditExample] from file path."""
@@ -126,8 +126,8 @@ class EditDataSplits(object):
 
         self.train = examples_from_file(join(data_dir, 'train.tsv'))
         self.valid = examples_from_file(join(data_dir, 'valid.tsv'))
-        self.test = examples_from_file(join(data_dir, 'test.tsv'))
-        self.free = free
+        # self.test = examples_from_file(join(data_dir, 'test.tsv'))
+        # self.free = free
 
 
 class RandomState(object):
