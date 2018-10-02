@@ -127,7 +127,7 @@ class EditDataSplits(object):
         self.train = examples_from_file(join(data_dir, 'train.tsv'))
         self.valid = examples_from_file(join(data_dir, 'valid.tsv'))
         self.test = examples_from_file(join(data_dir, 'test.tsv'))
-        # self.free = free
+        self.free = list()
 
 
 class RandomState(object):

@@ -23,12 +23,12 @@ editor {
     norm_max = 14.0
     kill_edit = False
     embed_sentence = False
-    wvec_path = glove.6B.300d_yelp.txt
+    wvec_path = wiki.de.vec
 }
 
 dataset {
     # this path should be relative to $SQUAD_ENTAILMENT_DATA
-    path = yelp_dataset_large_split
+    path = de-amazon-review
     use_diff = True
 }
 
