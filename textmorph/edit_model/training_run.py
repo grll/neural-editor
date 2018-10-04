@@ -101,6 +101,7 @@ class EditDataSplits(object):
         # with codecs.open(join(data_dir, 'free.txt'), 'r', encoding='utf-8') as f:
         #    free = [line.strip().lower() for line in f]
         #    free_set = set(free)
+        free_set = set()
 
         def examples_from_file(path):
             """Return list[EditExample] from file path."""
@@ -111,7 +112,7 @@ class EditDataSplits(object):
 
             with codecs.open(path, 'r', encoding='utf-8') as f:
                 for line in verboserate(f, desc='Reading data file.', total=total_lines):
-                    src, trg = line.strip().lower().split('\t')
+                    src, trg = line.strip().lower().split("\t")
                     src_words = src.split(' ')
                     trg_words = trg.split(' ')
                     assert len(src_words) > 0
