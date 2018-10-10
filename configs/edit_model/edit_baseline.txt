@@ -23,7 +23,7 @@ editor {
     norm_max = 14.0
     kill_edit = False
     embed_sentence = False
-    wvec_path = wiki.de.vec
+    wvec_path = amazon.de.vec
 }
 
 dataset {
