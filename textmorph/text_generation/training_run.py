@@ -108,7 +108,7 @@ class GenData(object):
                     src = line.strip().lower()
                     src_words = src.split(' ')
                     assert len(src_words) > 0
-                    examples.append(src_words)
+                    examples.append(EditExample(source_words=src_words, insert_words=[], insert_exact_words=[], delete_words=[], delete_exact_words=[], target_words=[], edit_embed=None))
             return examples
 
         self.data = examples_from_file(join(data_dir, 'IVR_text_HiGe_SCinternal'))

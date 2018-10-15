@@ -6,9 +6,9 @@ from nltk import word_tokenize
 from torch.nn import Module, LSTMCell
 
 from gtd.utils import UnicodeMixin, chunks
-from gtd.ml.torch.decoder import TrainDecoder, BeamDecoder, TrainDecoderInput
-from textmorph.edit_model.encoder import Encoder
-from textmorph.edit_model.attention_decoder import AttentionContextCombiner
+from textmorph.text_generation.decoder import TrainDecoder, BeamDecoder, TrainDecoderInput
+from textmorph.text_generation.encoder import Encoder
+from textmorph.text_generation.attention_decoder import AttentionContextCombiner
 
 class Editor(Module):
     """Editor.
@@ -203,7 +203,7 @@ class EditTrace(UnicodeMixin):
         return u'\n'.join([unicode(self.example), unicode(self.decoder_trace)])
 
 
-class GenExample(namedtuple('EditExample', ['source_words', 'insert_words', 'insert_exact_words', 'delete_words',
+class EditExample(namedtuple('EditExample', ['source_words', 'insert_words', 'insert_exact_words', 'delete_words',
                                              'delete_exact_words', 'target_words', 'edit_embed'])):
     """An example of how to perform an edit.
 
