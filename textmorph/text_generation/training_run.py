@@ -77,17 +77,14 @@ class EditTrainingRuns(TrainingRuns):
                     print f.traceback
 
 
-class EditDataSplits(object):
+class GenData(object):
     """
     Attributes:
-        train (list[EditExample])
-        valid (list[EditExample])
-        test (list[EditExample])
-        free (list[unicode]): a list of "free words" which are excluded from insertions and deletions
+        data (list[list[source_tokens]])
     """
 
-    def __init__(self, data_dir, use_diff):
-        """Load examples for training, validation and testing.
+    def __init__(self, data_dir):
+        """Load data.
 
         See README.md for how to format data so it can be loaded here.
         NOTE: this converts everything to lower case.
@@ -98,11 +95,6 @@ class EditDataSplits(object):
         Returns:
             EditDataSplits
         """
-        # load free words
-        # with codecs.open(join(data_dir, 'free.txt'), 'r', encoding='utf-8') as f:
-        #    free = [line.strip().lower() for line in f]
-        #    free_set = set(free)
-        free_set = set()
 
         def examples_from_file(path):
             """Return list[EditExample] from file path."""
@@ -113,23 +105,13 @@ class EditDataSplits(object):
 
             with codecs.open(path, 'r', encoding='utf-8') as f:
                 for line in verboserate(f, desc='Reading data file.', total=total_lines):
-                    src, trg = line.strip().lower().split("\t")
+                    src = line.strip().lower()
                     src_words = src.split(' ')
-                    trg_words = trg.split(' ')
                     assert len(src_words) > 0
-                    assert len(trg_words) > 0
-
-                    if use_diff:
-                        ex = EditExample.salient_diff(src_words, trg_words, free_set)
-                    else:
-                        ex = EditExample.whitelist_blacklist(src_words, trg_words)
-                    examples.append(ex)
+                    examples.append(src_words)
             return examples
 
-        self.train = examples_from_file(join(data_dir, 'train.tsv'))
-        self.valid = examples_from_file(join(data_dir, 'valid.tsv'))
-        self.test = examples_from_file(join(data_dir, 'test.tsv'))
-        self.free = list()
+        self.data = examples_from_file(join(data_dir, 'IVR_text_HiGe_SCinternal'))
 
 
 class RandomState(object):

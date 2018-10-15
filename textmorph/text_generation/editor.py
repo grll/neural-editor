@@ -203,7 +203,7 @@ class EditTrace(UnicodeMixin):
         return u'\n'.join([unicode(self.example), unicode(self.decoder_trace)])
 
 
-class EditExample(namedtuple('EditExample', ['source_words', 'insert_words', 'insert_exact_words', 'delete_words',
+class GenExample(namedtuple('EditExample', ['source_words', 'insert_words', 'insert_exact_words', 'delete_words',
                                              'delete_exact_words', 'target_words', 'edit_embed'])):
     """An example of how to perform an edit.
 
