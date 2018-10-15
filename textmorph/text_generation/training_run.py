@@ -6,6 +6,7 @@ from itertools import izip
 from os import listdir
 import os
 from os.path import dirname, realpath, join
+from collections import OrderedDict
 
 import numpy as np
 import torch
@@ -25,7 +26,7 @@ from textmorph import data
 from textmorph.edit_model.attention_decoder import AttentionDecoderCell
 from gtd.ml.torch.simple_decoder_cell import SimpleDecoderCell
 from textmorph.edit_model.edit_noiser import EditNoiser
-from textmorph.edit_model.editor import Editor, EditExample
+from textmorph.text_generation.editor import Editor, EditExample
 from gtd.ml.torch.token_embedder import TokenEmbedder
 from gtd.ml.torch.utils import similar_size_batches, try_gpu
 from gtd.ml.vocab import SimpleEmbeddings, WordVocab
@@ -235,8 +236,16 @@ class TrainState(object):
             d = pickle.load(f)
 
         # load model
-        optimizer.load_state_dict(torch.load(join(path, 'optimizer')))
-        editor.load_state_dict(torch.load(join(path, 'editor')))
+        optimizer.load_state_dict(torch.load(join(path, 'optimizer'), map_location='cpu'))
+        new_state_dict = OrderedDict({})
+        for key, value in torch.load(join(path, 'editor'), map_location='cpu').items():
+            new_state_dict[key] = value.squeeze()
+        
+        new_state_dict["train_decoder.decoder_cell.source_attention.v_transform"] = new_state_dict["train_decoder.decoder_cell.source_attention.v_transform"].unsqueeze(dim=1)
+        new_state_dict["train_decoder.decoder_cell.insert_attention.v_transform"] = new_state_dict["train_decoder.decoder_cell.insert_attention.v_transform"].unsqueeze(dim=1)
+        new_state_dict["train_decoder.decoder_cell.delete_attention.v_transform"] = new_state_dict["train_decoder.decoder_cell.delete_attention.v_transform"].unsqueeze(dim=1)
+
+        editor.load_state_dict(new_state_dict)
         train_state = TrainState(editor=editor, optimizer=optimizer, **d)
         return train_state
 
@@ -258,9 +267,9 @@ class EditTrainingRun(TorchTrainingRun):
             print 'Reloaded checkpoint #{}'.format(ckpt_num)
             self._train_state = self._reload_train_state(checkpoints_dir, ckpt_num, config)
 
-        # load data
-        data_dir = join(data.workspace.root, config.dataset.path)
-        self._examples = EditDataSplits(data_dir, config.dataset.use_diff)
+        # load data no need for textgeneration
+        # data_dir = join(data.workspace.root, config.dataset.path)
+        # self._examples = EditDataSplits(data_dir, config.dataset.use_diff)
 
     def train(self):
         self._train(self.config, self._train_state, self._examples, self.workspace, self.metadata, self.tb_logger)
