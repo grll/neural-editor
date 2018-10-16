@@ -21,7 +21,7 @@ RUN pip install --upgrade pip
 RUN pip install jupyter
 RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension  # add Jupyter notebook extension
 
-RUN pip install fabric
+RUN pip install 'fabric<2.0'
 RUN pip install pyOpenSSL==16.2.0
 RUN pip install psycopg2==2.6.1
 RUN pip install SQLAlchemy==1.1.0b3
