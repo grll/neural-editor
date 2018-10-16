@@ -60,7 +60,7 @@ class EditEncoder(Module):
         m_expand = mask.unsqueeze(2).expand(batch_size, max_edits, w_embed_size)
 
         for max_edit in range(max_edits):
-            phint = self.sample_vMF(values[:, max_edits, :], self.noise_scaler)
+            phint = self.sample_vMF(values[:, max_edit, :], self.noise_scaler)
             prand = self.draw_p_noise(batch_size, w_embed_size)
             new_values[:, max_edit, :] = phint*m_expand[:, max_edit, :]+ prand*(1-m_expand[:, max_edit, :])
 
