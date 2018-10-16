@@ -52,18 +52,16 @@ class EditEncoder(Module):
         :param seq_batch(SequenceBatch): a sequence batch of elements
         :return: noisy version of seq-batch
         """
-        values = seq_batch.values
+        values = seq_batch.values.sum(1).squeeze() # sum the word embedding of the words as in the paper...
         mask = seq_batch.mask
 
         batch_size, max_edits, w_embed_size = values.size()
         new_values = GPUVariable(torch.from_numpy(np.zeros((batch_size, max_edits, w_embed_size),dtype=np.float32)))
-        phint = self.sample_vMF(values[:,0,:], self.noise_scaler)
+        phint = self.sample_vMF(values, self.noise_scaler)
         prand = self.draw_p_noise(batch_size, w_embed_size)
-        m_expand = mask.unsqueeze(2).expand(batch_size, max_edits, w_embed_size)
-        print(m_expand)
-        print(phint)
-        print(prand)
-        new_values[:, 0, :] = phint*m_expand+ prand*(1-m_expand)
+        m_expand = mask.expand(batch_size, w_embed_size)
+
+        new_values = phint*m_expand+ prand*(1-m_expand)
         return SequenceBatch(values=new_values*draw_noise, mask=mask)
 
     def draw_p_noise(self, batch_size, edit_dim):
