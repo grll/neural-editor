@@ -83,7 +83,7 @@ class GenData(object):
         data (list[list[source_tokens]])
     """
 
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, file_name):
         """Load data.
 
         See README.md for how to format data so it can be loaded here.
@@ -111,7 +111,7 @@ class GenData(object):
                     examples.append(EditExample(source_words=src_words, insert_words=[], insert_exact_words=[], delete_words=[], delete_exact_words=[], target_words=[], edit_embed=None))
             return examples
 
-        self.data = examples_from_file(join(data_dir, 'valid.tsv'))
+        self.data = examples_from_file(join(data_dir, file_name))
 
 
 class RandomState(object):
