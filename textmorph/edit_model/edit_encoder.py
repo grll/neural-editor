@@ -57,13 +57,13 @@ class EditEncoder(Module):
 
         batch_size, max_edits, w_embed_size = values.size()
         new_values = GPUVariable(torch.from_numpy(np.zeros((batch_size, max_edits, w_embed_size),dtype=np.float32)))
-        phint = self.sample_vMF(values[:, 0, :], self.noise_scaler)
-        prand = self.draw_p_noise(batch_size, w_embed_size)
         m_expand = mask.unsqueeze(2).expand(batch_size, max_edits, w_embed_size)
 
-        new_values[:, 0, :] = phint*m_expand[:, 0, :]+ prand*(1-m_expand[:, 0, :])
+        for max_edit in range(max_edits):
+            phint = self.sample_vMF(values[:, max_edits, :], self.noise_scaler)
+            prand = self.draw_p_noise(batch_size, w_embed_size)
+            new_values[:, max_edit, :] = phint*m_expand[:, max_edit, :]+ prand*(1-m_expand[:, max_edit, :])
 
-        print(new_values)
         return SequenceBatch(values=new_values*draw_noise, mask=mask)
 
     def draw_p_noise(self, batch_size, edit_dim):
