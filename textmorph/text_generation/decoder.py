@@ -18,23 +18,20 @@ from gtd.utils import UnicodeMixin, chunks
 class TrainDecoderInput(object):
     """
     Attributes:
-        input_words (SequenceBatch): words that are fed into the decoder at each time step
-        target_words (SequenceBatch): words that should be outputted at each time step
+        input_words (SequenceBatch): words that are fed into the decoder at first time step
     """
-    __slots__ = ['input_words', 'target_words']
+    __slots__ = ['input_words']
 
-    def __init__(self, target_words, word_vocab):
+    def __init__(self, batch_size, word_vocab):
         """Create TrainDecoderInput.
         
         Args:
-            target_words (list[list[unicode]])
+            batch_size (int)
             word_vocab (WordVocab)
         """
-        input_words = [[word_vocab.START] + tokens for tokens in target_words]  # prepend with <start> token
-        target_words_shifted = [tokens + [word_vocab.STOP] for tokens in target_words]  # append with <stop> token
+        input_words = [[word_vocab.START] for i in range(batch_size)]  # prepend with <start> tokenn
 
         self.input_words = SequenceBatch.from_sequences(input_words, word_vocab)
-        self.target_words = SequenceBatch.from_sequences(target_words_shifted, word_vocab)
 
 class DropoutTrainDecoderInput(object):
 
@@ -103,7 +100,7 @@ class TrainDecoder(Module):
             rnn_states (list[RNNState])
             total_loss (Variable): a scalar loss
         """
-        batch_size, _ = train_decoder_input.input_words.mask.size()
+        batch_size, _ = encoder_output.source_embeds.mask.size()
         rnn_state = self.decoder_cell.initialize(batch_size)
 
         input_word_embeds = self.token_embedder.embed_seq_batch(train_decoder_input.input_words)
@@ -113,6 +110,7 @@ class TrainDecoder(Module):
 
         loss_list = []
         rnn_states = []
+
         for t, (x, target_word) in enumerate(izip(input_embed_list, target_word_list)):
             # x is a (batch_size, word_dim) SequenceBatchElement, target_word is a (batch_size,) Variable
 

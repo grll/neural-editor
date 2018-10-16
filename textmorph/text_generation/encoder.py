@@ -7,7 +7,7 @@ from gtd.ml.torch.seq_batch import SequenceBatch
 from gtd.ml.torch.source_encoder import MultiLayerSourceEncoder
 from gtd.ml.torch.utils import GPUVariable, NamedTupleLike
 from textmorph.edit_model.agenda import AgendaMaker
-from textmorph.edit_model.edit_encoder import EditEncoder
+from textmorph.text_generation.edit_encoder import EditEncoder
 
 EncoderInput = namedtuple('EncoderInput',
                           ['source_words', 'insert_words', 'insert_exact_words', 'delete_words', 'delete_exact_words',

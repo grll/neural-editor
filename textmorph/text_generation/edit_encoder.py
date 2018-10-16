@@ -64,7 +64,7 @@ class EditEncoder(Module):
 
     def draw_p_noise(self, batch_size, edit_dim):
         rand_draw = GPUVariable(torch.randn(batch_size, edit_dim))
-        rand_draw = rand_draw / torch.norm(rand_draw, p=2, dim=1).expand(batch_size, edit_dim)
+        rand_draw = rand_draw / torch.norm(rand_draw, p=2, dim=1).unsqueeze(1).expand(batch_size, edit_dim)
         rand_norms = (torch.rand(batch_size,1)*self.norm_max).expand(batch_size, edit_dim)
         return rand_draw * GPUVariable(rand_norms)
 

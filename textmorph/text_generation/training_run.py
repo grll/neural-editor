@@ -105,13 +105,13 @@ class GenData(object):
 
             with codecs.open(path, 'r', encoding='utf-8') as f:
                 for line in verboserate(f, desc='Reading data file.', total=total_lines):
-                    src = line.strip().lower()
+                    src, _ = line.strip().lower().split('\t')
                     src_words = src.split(' ')
                     assert len(src_words) > 0
                     examples.append(EditExample(source_words=src_words, insert_words=[], insert_exact_words=[], delete_words=[], delete_exact_words=[], target_words=[], edit_embed=None))
             return examples
 
-        self.data = examples_from_file(join(data_dir, 'IVR_text_HiGe_SCinternal'))
+        self.data = examples_from_file(join(data_dir, 'valid.tsv'))
 
 
 class RandomState(object):

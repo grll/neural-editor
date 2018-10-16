@@ -27,11 +27,13 @@ source_data = GenData(data_dir) # load the data
 batches = similar_size_batches(source_data.data, 32, size=lambda x: len(x))
 
 for batch in verboserate(batches, desc='Streaming Source Sentences'):
-    # Source Encode
+    # Source & Edit Encoding
     source_words, insert_words, insert_exact_words, delete_words, delete_exact_words, target_words, edit_embed = exp.editor._batch_editor_examples(batch)
     encoder_input = exp.editor.encoder.preprocess(source_words, insert_words, insert_exact_words, delete_words, delete_exact_words, edit_embed)
     encoder_output = exp.editor.encoder(encoder_input)
 
+    # Decoding
+    
     break
     # Edit Encode
     # Decode with attention using generated tokens from previous timestep as input in first lstm layer.

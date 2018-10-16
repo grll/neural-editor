@@ -1,1 +1,1 @@
-{"docker_image": "kelvinguu/textmorph:1.2", "data_env_var": "TEXTMORPH_DATA"}
+{"docker_image": "pytorch:1.2.1", "data_env_var": "TEXTMORPH_DATA"}
