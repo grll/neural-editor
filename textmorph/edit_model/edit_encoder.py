@@ -55,7 +55,7 @@ class EditEncoder(Module):
         values = seq_batch.values.sum(1).squeeze() # sum the word embedding of the words as in the paper instead of returning only the first insert/delete...
         mask = seq_batch.mask
 
-        batch_size, max_edits, w_embed_size = values.size()
+        batch_size, w_embed_size = values.size()
         new_values = GPUVariable(torch.from_numpy(np.zeros((batch_size, w_embed_size),dtype=np.float32)))
         phint = self.sample_vMF(values, self.noise_scaler)
         prand = self.draw_p_noise(batch_size, w_embed_size)
