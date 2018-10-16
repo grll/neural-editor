@@ -38,7 +38,7 @@ RUN pip install pyhocon line_profiler pytest tqdm faulthandler python-Levenshtei
 
 RUN apt-get update
 RUN apt-get install -y vim less tmux nmap
-COPY .tmux.conf /root
+# COPY .tmux.conf /root
 
 # vim bindings for Jupyter
 # https://github.com/lambdalisue/jupyter-vim-binding
