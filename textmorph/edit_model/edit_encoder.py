@@ -53,14 +53,13 @@ class EditEncoder(Module):
         :return: noisy version of seq-batch
         """
         values = seq_batch.values
-        print(values)
         mask = seq_batch.mask
-        print(mask)
+
         batch_size, max_edits, w_embed_size = values.size()
         new_values = GPUVariable(torch.from_numpy(np.zeros((batch_size, max_edits, w_embed_size),dtype=np.float32)))
         phint = self.sample_vMF(values[:,0,:], self.noise_scaler)
         prand = self.draw_p_noise(batch_size, w_embed_size)
-        m_expand = mask.expand(batch_size, w_embed_size)
+        m_expand = mask.unsqueeze(2).expand(batch_size, max_edits, w_embed_size)
         new_values[:, 0, :] = phint*m_expand+ prand*(1-m_expand)
         return SequenceBatch(values=new_values*draw_noise, mask=mask)
 
