@@ -19,7 +19,7 @@ RUN apt-get --yes --force-yes install libffi6 libffi-dev libssl-dev libpq-dev gi
 
 RUN pip install --upgrade pip
 RUN pip install jupyter
-RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension  # add Jupyter notebook extension
+# RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension  # add Jupyter notebook extension
 
 RUN pip install 'fabric<2.0'
 RUN pip install pyOpenSSL==16.2.0
@@ -42,9 +42,9 @@ RUN apt-get install -y vim less tmux nmap
 
 # vim bindings for Jupyter
 # https://github.com/lambdalisue/jupyter-vim-binding
-RUN mkdir -p $(jupyter --data-dir)/nbextensions
-RUN git clone https://github.com/lambdalisue/jupyter-vim-binding $(jupyter --data-dir)/nbextensions/vim_binding
-RUN jupyter nbextension enable vim_binding/vim_binding
+# RUN mkdir -p $(jupyter --data-dir)/nbextensions
+# RUN git clone https://github.com/lambdalisue/jupyter-vim-binding $(jupyter --data-dir)/nbextensions/vim_binding
+# RUN jupyter nbextension enable vim_binding/vim_binding
 
 # autoreload for Jupyter
 RUN ipython profile create
