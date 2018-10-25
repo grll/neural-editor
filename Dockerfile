@@ -61,3 +61,5 @@ RUN pip install ipdb
 RUN apt-get install -y  openssh-server
 COPY ./sshd_config /etc/ssh/sshd_config
 RUN echo "root:docker" | chpasswd
+
+COPY ./init.sh /etc/init.sh
