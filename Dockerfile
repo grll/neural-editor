@@ -63,3 +63,4 @@ COPY ./sshd_config /etc/ssh/sshd_config
 RUN echo "root:docker" | chpasswd
 
 COPY ./init.sh /etc/init.sh
+RUN chmod 755 /etc/init.sh
