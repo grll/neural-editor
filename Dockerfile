@@ -56,3 +56,8 @@ RUN echo 'c.InteractiveShellApp.exec_lines.append("%autoreload 2")' >> ~/.ipytho
 RUN pip install tensorflow
 
 RUN pip install annoy pympler
+RUN pip install ipdb
+
+RUN apt-get install -y  openssh-server
+COPY ./sshd_config /etc/ssh/sshd_config
+RUN echo "root:docker" | chpasswd
