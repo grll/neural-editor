@@ -32,10 +32,10 @@ data_dir = os.environ[data_env_var]
 
 my_uid = subprocess.check_output(['echo', '$UID']).strip()
 
-docker_args = ["--net host",  # access to the Internet
-               "--publish 8889:8889",  # only certain ports are exposed
+docker_args = ["--publish 8889:8889",  # only certain ports are exposed
                "--publish 6006:6006",
                "--publish 8080:8080",
+               "--publish 53022:22",  # for ssh remote interpreter
                "--ipc=host",
                "--rm",
                "--volume {}:/data".format(data_dir),
