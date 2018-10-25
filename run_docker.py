@@ -32,11 +32,7 @@ data_dir = os.environ[data_env_var]
 
 my_uid = subprocess.check_output(['echo', '$UID']).strip()
 
-docker_args = ["--net host",  # access to the Internet
-               "--publish 8889:8889",  # only certain ports are exposed
-               "--publish 6006:6006",
-               "--publish 8080:8080",
-               "--ipc=host",
+docker_args = ["--publish 53022:22",
                "--rm",
                "--volume {}:/data".format(data_dir),
                "--volume {}:/code".format(repo_dir),
