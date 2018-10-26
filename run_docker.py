@@ -47,7 +47,8 @@ docker_args = ["--publish 53022:22",
 if args.command is None:
     docker_args.append('--interactive')
     docker_args.append('--tty')
-    args.command = '"-c \"/etc/init.sh ; bash\""'
+    docker_args.append('--entrypoint "/etc/init.sh"')
+    args.command = '"/bin/bash"'
 
 if not args.root:
     docker_args.append('--user={}'.format(my_uid))
