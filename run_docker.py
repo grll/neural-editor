@@ -33,8 +33,6 @@ data_dir = os.environ[data_env_var]
 my_uid = subprocess.check_output(['echo', '$UID']).strip()
 
 docker_args = ["--publish 53022:22",
-               "--tty",
-               "--interactive",
                "--rm",
                "--volume {}:/data".format(data_dir),
                "--volume {}:/code".format(repo_dir),
@@ -48,7 +46,7 @@ docker_args = ["--publish 53022:22",
 if args.command is None:
     docker_args.append('--interactive')
     docker_args.append('--tty')
-    args.command = '/bin/bash -c "/etc/init.sh"; /bin/bash'
+    args.command = '"-c \"/etc/init.sh ; bash\""'
 
 if not args.root:
     docker_args.append('--user={}'.format(my_uid))
