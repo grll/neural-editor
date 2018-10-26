@@ -48,7 +48,7 @@ if args.command is None:
     docker_args.append('--interactive')
     docker_args.append('--tty')
     docker_args.append('--entrypoint "/etc/init.sh"')
-    args.command = '/bin/bash'
+    args.command = 'bash'
 
 if not args.root:
     docker_args.append('--user={}'.format(my_uid))
