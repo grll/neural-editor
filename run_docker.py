@@ -33,7 +33,7 @@ data_dir = os.environ[data_env_var]
 
 my_uid = subprocess.check_output(['echo', '$UID']).strip()
 
-docker_args = ["--publish 53022:22",
+docker_args = ["--publish {}:22".format(args.sshport),
                "--rm",
                "--volume {}:/data".format(data_dir),
                "--volume {}:/code".format(repo_dir),
