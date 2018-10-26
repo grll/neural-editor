@@ -1,5 +1,6 @@
 #!/bin/bash
-env >> /etc/environement
-service ssh start
+set -e
+    env >> /etc/environement
+    service ssh start
 
 exec "$@"
