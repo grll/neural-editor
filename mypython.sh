@@ -1,3 +1,3 @@
 #!/bin/bash -l
-source /etc/environement
+$(cat /etc/environement | xargs)
 /opt/conda/envs/pytorch-py27/bin/python "$@"
