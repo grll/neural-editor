@@ -11,6 +11,7 @@ from os.path import dirname, abspath, join
 import subprocess
 
 arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument('-p', '--sshport', default=53022, help='SSH port to use for remote debugging.')
 arg_parser.add_argument('-r', '--root', action='store_true', help='Run as root in Docker.')
 arg_parser.add_argument('-g', '--gpu', default='', help='GPU to use.')
 arg_parser.add_argument('-d', '--debug', action='store_true', help='Print command instead of running.')
