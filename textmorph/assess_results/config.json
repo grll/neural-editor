@@ -1,0 +1,12 @@
+{
+  "global_config": {
+    "data_loader": {
+      "dataset_foldername": "SC_datasets_translated",
+      "dataset_filename": "SCinternal_en.txt",
+      "data_type": "one_line_one_sentence"
+    }
+  },
+  "runs_config": [
+    {}
+  ]
+}

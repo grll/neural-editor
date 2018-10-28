@@ -57,6 +57,8 @@ RUN pip install tensorflow
 
 RUN pip install annoy pympler
 RUN pip install ipdb
+RUN pip install spacy
+RUN python -m spacy download en_core_web_lg
 
 RUN apt-get install -y  openssh-server
 COPY ./sshd_config /etc/ssh/sshd_config
