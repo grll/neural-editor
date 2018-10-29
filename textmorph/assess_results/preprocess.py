@@ -1,5 +1,5 @@
 import spacy
-nlp = spacy.load('en_core_web_lg')
+nlp = spacy.load('de_core_news_sm')
 
 class GrllPreprocessor:
     """ Define all the preprocessing on sentence for the neural editor. """
@@ -36,7 +36,6 @@ class GrllPreprocessor:
         for token in token_list:
             if token.ent_iob_ == "B":
                 ent_name = token.ent_type_.lower()
-                new_text_token_list.append("<" + ent_name + ">")
 
                 t = [token.text]
                 for token in token.doc[token.idx + 1:]:
@@ -44,18 +43,30 @@ class GrllPreprocessor:
                         t.append(token.text)
                     else:
                         break
-
-                if ent_name in entities:
-                    entities[ent_name].append(" ".join(t))
+                if ent_name == "misc":
+                    for tt in t:
+                        if self.word_vocab.word2index(tt) == 0:
+                            new_text_token_list.append(u"<unk>")
+                            if u"<unk>" in entities:
+                                entities[u"<unk>"].append(tt)
+                            else:
+                                entities[u"<unk>"] = [tt]
+                        else:
+                            new_text_token_list.append(tt)
                 else:
-                    entities[ent_name] = [" ".join(t)]
+                    new_text_token_list.append("<" + ent_name + ">")
+
+                    if ent_name in entities:
+                        entities[ent_name].append(" ".join(t))
+                    else:
+                        entities[ent_name] = [" ".join(t)]
 
             else:
                 if token.ent_iob_ in ["O", ""]:
                     if self.word_vocab.word2index(token.text) == 0:
                         new_text_token_list.append(u"<unk>")
                         if u"<unk>" in entities:
-                            entities[ent_name].append(token.text)
+                            entities[u"<unk>"].append(token.text)
                         else:
                             entities[u"<unk>"] = [token.text]
                     else:

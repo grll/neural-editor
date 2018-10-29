@@ -14,25 +14,25 @@ class GrllNeuralEditor():
         """Initialise with an editor from the neural editor model."""
         self.editor = editor
 
-    def edit(self, examples, max_seq_length=35, beam_size=5, batch_size=500, random_edit_vector=False):
+    def edit(self, examples, max_seq_length=35, beam_size=5, batch_size=500):
         """Add one argument random_edit_vector wich enforce edition with a random vector."""
         beam_list = []
         edit_traces = []
         for batch in chunks(examples, batch_size / beam_size):
-            beams, traces = self._edit_batch(batch, max_seq_length, beam_size, random_edit_vector=random_edit_vector)
+            beams, traces = self._edit_batch(batch, max_seq_length, beam_size)
             beam_list.extend(beams)
             edit_traces.extend(traces)
         return beam_list, edit_traces
 
     # add sampling from random vector
-    def _edit_batch(self, examples, max_seq_length, beam_size, random_edit_vector=False):
+    def _edit_batch(self, examples, max_seq_length, beam_size):
         """Add one argument random_edit_vector wich enforce edition with a random vector."""
         source_words, insert_words, insert_exact_words, delete_words, delete_exact_words, _, edit_embed = self.editor._batch_editor_examples(
             examples)
         encoder_input = self.editor.encoder.preprocess(source_words, insert_words, insert_exact_words, delete_words,
                                                        delete_exact_words, edit_embed)
         # encoder_output = self.editor.encoder(encoder_input, draw_samples=random_edit_vector, draw_p = random_edit_vector)
-        encoder_output = self.encoder_generate_edits(encoder_input, self.editor.encoder.edit_encoder.norm_max)
+        encoder_output = self.encoder_generate_edits(encoder_input)
 
         beams, decoder_traces = self.editor.test_decoder_beam.decode(examples, encoder_output,
                                                                      weighted_value_estimators=[]
@@ -41,7 +41,7 @@ class GrllNeuralEditor():
 
         return beams, [EditTrace(ex, d_trace.beam_traces[-1]) for ex, d_trace in izip(examples, decoder_traces)]
 
-    def encoder_generate_edits(self, encoder_input, norm):
+    def encoder_generate_edits(self, encoder_input):
         """ Draw uniform random vectors with given norm, and use as edit vector """
         source_words = encoder_input.source_words
         source_word_embeds = self.editor.encoder.token_embedder.embed_seq_batch(source_words)

@@ -23,7 +23,6 @@ class GrllConfig:
                 self._data = json.load(f)
 
             self._config = {}
-            import ipdb; ipdb.set_trace()
             for k,v in self._data["global_config"].items():
                 self._config[k] = v  # Set global config attributes that are overridden in each runs.
 

@@ -24,7 +24,7 @@ class GrllDataLoader:
             if data_type == "one_line_one_sentence":
                 self._data = []
                 for line in f:
-                    self._data.append(line)
+                    self._data.append(line.replace("\n", ""))
             else:
                 raise NotImplementedError
         self.data_type = data_type
@@ -48,7 +48,7 @@ class GrllDataLoader:
         """
         for data in self.generate_one_sample():
             if self.data_type == "one_line_one_sentence":
-                preprocessed_sentence, entities = preprocessor.preprocess(data)
+                entities, preprocessed_sentence  = preprocessor.preprocess(data)
                 yield (entities, preprocessed_sentence, data)
             else:
                 raise NotImplementedError
