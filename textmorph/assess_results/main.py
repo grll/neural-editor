@@ -13,7 +13,7 @@ word_vocab = exp.editor.train_decoder.word_vocab  # word vocabulary used during 
 
 preprocessor = GrllPreprocessor(word_vocab)  # create a preprocessor to preprocess the data.
 
-configs = GrllConfig()
+configs = GrllConfig("textmorph/assess_results/config.json")
 
 for config_run in configs:
     dataloader = GrllDataLoader(config_run["data_loader"]["dataset_foldername"],

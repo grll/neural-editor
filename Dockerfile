@@ -18,7 +18,7 @@ RUN apt-get update
 RUN apt-get --yes --force-yes install libffi6 libffi-dev libssl-dev libpq-dev git
 
 RUN pip install --upgrade pip
-RUN pip install jupyter
+# RUN pip install jupyter
 # RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension  # add Jupyter notebook extension
 
 RUN pip install 'fabric<2.0'
@@ -47,10 +47,10 @@ RUN apt-get install -y vim less tmux nmap
 # RUN jupyter nbextension enable vim_binding/vim_binding
 
 # autoreload for Jupyter
-RUN ipython profile create
-RUN echo 'c.InteractiveShellApp.exec_lines = []' >> ~/.ipython/profile_default/ipython_config.py
-RUN echo 'c.InteractiveShellApp.exec_lines.append("%load_ext autoreload")' >> ~/.ipython/profile_default/ipython_config.py
-RUN echo 'c.InteractiveShellApp.exec_lines.append("%autoreload 2")' >> ~/.ipython/profile_default/ipython_config.py
+# RUN ipython profile create
+# RUN echo 'c.InteractiveShellApp.exec_lines = []' >> ~/.ipython/profile_default/ipython_config.py
+# RUN echo 'c.InteractiveShellApp.exec_lines.append("%load_ext autoreload")' >> ~/.ipython/profile_default/ipython_config.py
+# RUN echo 'c.InteractiveShellApp.exec_lines.append("%autoreload 2")' >> ~/.ipython/profile_default/ipython_config.py
 
 # just installing so we can get tensorboard
 RUN pip install tensorflow
@@ -60,12 +60,17 @@ RUN pip install ipdb
 RUN pip install spacy
 RUN python -m spacy download en_core_web_lg
 
-RUN apt-get install -y  openssh-server
-COPY ./sshd_config /etc/ssh/sshd_config
-RUN echo "root:docker" | chpasswd
+ENV PYTHONPATH /code
+ENV TEXTMORPH_DATA /data
 
-COPY ./mypython.sh /etc/mypython.sh
-RUN chmod 755 /etc/mypython.sh
+WORKDIR  /code
+ENTRYPOINT ["python"]
+# RUN apt-get install -y  openssh-server
+# COPY ./sshd_config /etc/ssh/sshd_config
+# RUN echo "root:docker" | chpasswd
 
-COPY ./init.sh /etc/init.sh
-RUN chmod 755 /etc/init.sh
+# COPY ./mypython.sh /etc/mypython.sh
+# RUN chmod 755 /etc/mypython.sh
+
+# COPY ./init.sh /etc/init.sh
+# RUN chmod 755 /etc/init.sh
