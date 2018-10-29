@@ -2,11 +2,10 @@ class Results():
 
     def __init__(self, edit_traces):
         self.edit_traces = edit_traces
-        self.possible_entities = [u"<person>", u"<norp>", u"<fac>", u"<org>", u"<gpe>", u"<loc>", u"<product>",
-                                  u"<event>", u"<work_of_art>", u"<law>", u"<language>", u"<date>", u"<time>",
-                                  u"<percent>", u"<money>", u"<quantity>", u"<ordinal>", u"<cardinal>", u"<unk>"]
+        self.possible_entities = [ u"<loc>", u"<org>", u"<ordinal>", u"<per>", u"<unk>"]
 
     def compute_best_n_results(self, n=5):
+        """ Compute best n for each sentence using only one generation per edit vector"""
         filtered_results = []
         candidates = []
 
