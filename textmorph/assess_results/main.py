@@ -7,14 +7,16 @@ from sentence import Sentence
 from results import Results
 from textmorph import data
 from os.path import dirname, join
+from logger import GrllLogger
 
 
+logger = GrllLogger(name="assess_results", level="DEBUG")
 configs = GrllConfig("textmorph/assess_results/config.json")
 
 for config_run in configs:
     exp = None
-    if str(config_run["edit_model"]["exp_num"]).isdigit():
-        experiments = MyEditTrainingRuns()  # If you don't want to load any model specify a non digit exp_num
+    if str(config_run["edit_model"]["exp_num"]).isdigit():  # If you don't want to load any model specify a non digit exp_num.
+        experiments = MyEditTrainingRuns()
         exp = experiments[config_run["edit_model"]["exp_num"]]
 
     if exp is None:
