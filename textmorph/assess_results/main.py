@@ -13,7 +13,7 @@ configs = GrllConfig("textmorph/assess_results/config.json")
 
 for config_run in configs:
     exp = None
-    if config_run["edit_model"]["exp_num"].isdigit():
+    if str(config_run["edit_model"]["exp_num"]).isdigit():
         experiments = MyEditTrainingRuns()  # If you don't want to load any model specify a non digit exp_num
         exp = experiments[config_run["edit_model"]["exp_num"]]
 

@@ -10,7 +10,7 @@
     {
       "lang": "de",
       "edit_model": {
-        "exp_num": 6
+        "exp_num": "none"
       },
       "data_loader": {
         "preprocess": {

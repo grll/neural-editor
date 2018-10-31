@@ -47,7 +47,7 @@ class GrllPreprocessor:
         entities = {}
         for token in token_list:
             if token.ent_iob_ in ["O", ""]:
-                new_text_token_list.append(token)
+                new_text_token_list.append(token.text)
             elif token.ent_iob_ in ["B", "I"]:
                 ent_name = token.ent_type_.lower()
                 if ent_name in self._entities_to_replace:
@@ -78,7 +78,7 @@ class GrllPreprocessor:
             raise Exception("The token is not the beginning of a spacy entity.")
 
         t = [token.text]
-        for token in token.doc[token.idx + 1:]:
+        for token in token.doc[token.i + 1:]:
             if token.ent_iob_ == "I":
                 t.append(token.text)
             else:
