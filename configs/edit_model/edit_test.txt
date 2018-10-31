@@ -5,30 +5,30 @@ seed = 0
 
 editor {
     decoder_cell = AttentionDecoderCell
-    vocab_size = 10000  # a proper size would be >20000
+    vocab_size = 20000  # a proper size would be >20000
     word_dim = 300
     hidden_dim = 256  # hidden state dim of encoder and decoder
     agenda_dim = 256  # agenda vector dim
-    edit_dim = 256 # edit vector dimension
+    edit_dim = 128 # edit vector dimension
     attention_dim = 128
     encoder_layers = 3
     decoder_layers = 3
     no_insert_delete_attn = False
     edit_dropout = True
     ident_pr = 0.1
-    attend_pr = 0.5
+    attend_pr = 0.0
     enable_vae = True
-    lamb_reg = 50.0
+    lamb_reg = 100.0
     norm_eps = 0.1
-    norm_max = 7.5
-    kill_edit = True
+    norm_max = 14.0
+    kill_edit = False
     embed_sentence = False
-    wvec_path = glove.6B.300d_yelp.txt
+    wvec_path = amazon.de.vec-2.0
 }
 
 dataset {
     # this path should be relative to $SQUAD_ENTAILMENT_DATA
-    path = yelp_dataset_small
+    path = de-amazon-review
     use_diff = True
 }
 

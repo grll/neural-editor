@@ -25,9 +25,10 @@ for config_run in configs:
                                 config_run["data_loader"]["data_type"])
 
     results = Results()
-    for entities, preprocessed_sentence, original_data in dataloader.generate_one_preprocessed_sample(preprocessor):
+    for entities, preprocessed_sentence, original_sentence in dataloader.generate_one_preprocessed_sample(preprocessor):
         sentence = Sentence(preprocessed_sentence.split(" "),
-                            entities=entities, original_sentence=original_data,
+                            entities=entities,
+                            original_sentence=original_sentence,
                             preprocessed_sentence=preprocessed_sentence)
 
         batch = [sentence] * config_run["edition"]["number_of_edit_vector"]
