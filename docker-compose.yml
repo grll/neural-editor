@@ -1,9 +1,29 @@
 version: '3'
 services:
+
+  bash:
+    build: .
+    volumes:
+      - /home/guillaumer/aimlx/neural-editor-grll:/code
+      - /home/guillaumer/aimlx/neural-editor-grll-data:/data
+    entrypoint:
+      - /bin/bash
+    stdin_open: true
+    tty: true
+
   python:
     build: .
     volumes:
       - /home/guillaumer/aimlx/neural-editor-grll:/code
       - /home/guillaumer/aimlx/neural-editor-grll-data:/data
-    environment:
-      - CUDA_VISIBLE_DEVICES=0
+    entrypoint:
+      - python
+
+  python-assess_results:
+    build: .
+    volumes:
+      - /home/guillaumer/aimlx/neural-editor-grll:/code
+      - /home/guillaumer/aimlx/neural-editor-grll-data:/data
+    entrypoint:
+      - python
+    command: textmorph/asses_results/main.py

@@ -65,13 +65,3 @@ ENV PYTHONPATH /code
 ENV TEXTMORPH_DATA /data
 
 WORKDIR  /code
-ENTRYPOINT ["python"]
-# RUN apt-get install -y  openssh-server
-# COPY ./sshd_config /etc/ssh/sshd_config
-# RUN echo "root:docker" | chpasswd
-
-# COPY ./mypython.sh /etc/mypython.sh
-# RUN chmod 755 /etc/mypython.sh
-
-# COPY ./init.sh /etc/init.sh
-# RUN chmod 755 /etc/init.sh
