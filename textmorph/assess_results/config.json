@@ -8,6 +8,31 @@
   },
   "runs_config": [
     {
+      "lang": "de",
+      "edit_model": {
+        "exp_num": 6
+      },
+      "data_loader": {
+        "preprocess": {
+          "show": true,
+          "filename": "preprocess_results_wo_word_vocab.txt"
+        }
+      },
+      "edition": {
+        "number_of_edit_vector": 100
+      }
+    },
+    {
+      "lang": "de",
+      "edit_model": {
+        "exp_num": 6
+      },
+      "data_loader": {
+        "preprocess": {
+          "show": true,
+          "filename": "preprocess_results_with_word_vocab.txt"
+        }
+      },
       "edition": {
         "number_of_edit_vector": 100
       }

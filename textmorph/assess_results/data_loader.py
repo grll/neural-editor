@@ -10,13 +10,14 @@ class GrllDataLoader:
         data_type : the type of the data loaded.
     """
 
-    def __init__(self, foldername, filename, data_type):
+    def __init__(self, foldername, filename, data_type, preprocessor=None):
         """ Initialize a dataloader instance.
 
         Args:
             foldername (str): Name or Path corresponding to the folder.
             filename (str): Name of the file to load.
             data_type (str): Type of data to load among possible values are: ["one_line_one_sentence"]
+            preprocessor: A preprocessor to process the data must implement the preprocess method.
         """
         dataset_dir = join(data.root, foldername)
         file_path = join(dataset_dir, filename)
@@ -28,6 +29,7 @@ class GrllDataLoader:
             else:
                 raise NotImplementedError
         self.data_type = data_type
+        self.preprocessor = preprocessor
 
     def generate_one_sample(self):
         """ Yield data samples one by one. """
@@ -37,7 +39,7 @@ class GrllDataLoader:
         else:
             raise NotImplementedError
 
-    def generate_one_preprocessed_sample(self, preprocessor):
+    def generate_one_preprocessed_sample(self):
         """ Yield a preprocessed sample from the dataset.
 
         Args:
@@ -48,7 +50,7 @@ class GrllDataLoader:
         """
         for data in self.generate_one_sample():
             if self.data_type == "one_line_one_sentence":
-                entities, preprocessed_sentence  = preprocessor.preprocess(data)
-                yield (entities, preprocessed_sentence, data)
+                preprocessed_sentence, entities = self.preprocessor.preprocess(data)
+                yield preprocessed_sentence, entities, data
             else:
                 raise NotImplementedError
