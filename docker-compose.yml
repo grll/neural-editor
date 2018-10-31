@@ -6,4 +6,4 @@ services:
       - /home/guillaumer/aimlx/neural-editor-grll:/code
       - /home/guillaumer/aimlx/neural-editor-grll-data:/data
     environment:
-      - CUDA_VISIBLE_DEVICES=1
+      - CUDA_VISIBLE_DEVICES=0
