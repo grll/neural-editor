@@ -37,3 +37,6 @@ class GrllLogger():
     def critical(self, msg, *args, **kwargs):
         self._logger.critical(msg, *args, **kwargs)
 
+    def log_preprocessed_sentences(self, file_path, data):
+        #with open()
+

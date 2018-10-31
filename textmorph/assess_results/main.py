@@ -37,14 +37,15 @@ for config_run in configs:
                                 config_run["data_loader"]["data_type"],
                                 preprocessor)
 
+    dataloader.preprocess_all(config_run["data_loader"]["force_preprocessing"])
     if config_run["data_loader"]["preprocess"]["show"]:
         dataset_dir = join(data.root, config_run["data_loader"]["dataset_foldername"])
         file_path = join(dataset_dir, config_run["data_loader"]["preprocess"]["filename"])
-        with open(file_path, "wb") as f:
-            for preprocessed_sentence, entities, original_sentence in dataloader.generate_one_preprocessed_sample():
-                f.write(original_sentence.encode("utf8") + "\n")
-                f.write("> " + preprocessed_sentence.encode("utf8") + "\n")
-                f.write("> " + str(entities) + "\n\n")
+        for preprocessed_sentence, entities, original_sentence in dataloader.generate_one_preprocessed_sample():
+            logger.log_preprocessed_sentences(file_path, original_sentence.encode("utf8"), preprocessed_sentence.encode("utf8"), str(entities))
+            f.write(original_sentence.encode("utf8") + "\n")
+            f.write("> " + preprocessed_sentence.encode("utf8") + "\n")
+            f.write("> " + str(entities) + "\n\n")
 
     if editor is not None:
         results = Results()
