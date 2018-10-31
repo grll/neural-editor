@@ -8,18 +8,18 @@ from results import Results
 from textmorph import data
 from os.path import dirname, join
 
-# Load the model to use
-experiments = MyEditTrainingRuns()
-exp = experiments[6]  # put here the id of the test to load
-
-editor = GrllNeuralEditor(exp.editor)  # create custom editor with random edition.
-word_vocab = exp.editor.train_decoder.word_vocab  # word vocabulary used during training of the editor.
-
-preprocessor = GrllPreprocessor(word_vocab)  # create a preprocessor to preprocess the data.
 
 configs = GrllConfig("textmorph/assess_results/config.json")
 
 for config_run in configs:
+
+    if config_run["edit_model"]["exp_num"].isdigit():
+        experiments = MyEditTrainingRuns()  # If you don't want to load any model specify a non digit exp_num
+        exp = experiments[config_run["edit_model"]["exp_num"]]
+        editor = GrllNeuralEditor(exp.editor)  # create custom editor with random edition.
+        word_vocab = exp.editor.train_decoder.word_vocab  # word vocabulary used during training of the editor.
+        preprocessor = GrllPreprocessor(word_vocab)  # create a preprocessor to preprocess the data.
+
     dataloader = GrllDataLoader(config_run["data_loader"]["dataset_foldername"],
                                 config_run["data_loader"]["dataset_filename"],
                                 config_run["data_loader"]["data_type"])
