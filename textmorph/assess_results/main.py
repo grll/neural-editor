@@ -10,16 +10,20 @@ from os.path import dirname, join
 from logger import GrllLogger
 
 
-logger = GrllLogger(name="assess_results", level="DEBUG")
+logger = GrllLogger(level="DEBUG")
+
 configs = GrllConfig("textmorph/assess_results/config.json")
 
 for config_run in configs:
+
     exp = None
     if str(config_run["edit_model"]["exp_num"]).isdigit():  # If you don't want to load any model specify a non digit exp_num.
+        logger.info("Loading the model from experiment #{}.".format(config_run["edit_model"]["exp_num"]))
         experiments = MyEditTrainingRuns()
         exp = experiments[config_run["edit_model"]["exp_num"]]
 
     if exp is None:
+        logger.info("No model was loaded: no editor or word_vocab will be available in this config.".format(config_run["edit_model"]["exp_num"]))
         editor = None
         word_vocab = None
     else:

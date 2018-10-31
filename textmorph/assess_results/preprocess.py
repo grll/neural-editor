@@ -1,4 +1,8 @@
 import spacy
+import logging
+
+logger = logging.getLogger("assess_results")
+logger.propagate = False
 
 
 class GrllPreprocessor:
@@ -11,10 +15,13 @@ class GrllPreprocessor:
     """
 
     def __init__(self, word_vocab=None, lang="de"):
+        logger.info("Initialize preprocessor in {} with word_vocab: {}.".format(lang, word_vocab is None))
         self._word_vocab = word_vocab
         self._entities_to_replace = ["loc", "org", "per", "ordinal"]
         if lang == "de":
+            logger.info("Load spacy model: {}.".format('de_core_news_sm'))
             self._nlp = spacy.load('de_core_news_sm')
+            logger.info("Finished loading spacy model.")
         else:
             raise NotImplementedError
 
@@ -27,10 +34,13 @@ class GrllPreprocessor:
         Returns:
             dict_entities, preprocessed_sentence
         """
+        logger.debug("Preprocessing sentence: {}".format(sentence.encode("utf8")))
         doc = self._nlp(sentence)
         tokens_list, entities = self.replace_named_entities(doc)
         if self._word_vocab is not None:
             tokens_list, entities = self.replace_unknown_entities(tokens_list, entities)
+        logger.debug("preprocessed_sentence: {}".format(" ".join(tokens_list).encode("utf8")))
+        logger.debug("entities: {}".format(entities))
         return " ".join(tokens_list), entities
 
     def replace_named_entities(self, token_list):
@@ -43,6 +53,7 @@ class GrllPreprocessor:
             new_text_token_list, entities: a list of string token corresponding to the preprocessed sentence and a dict
                                            of entities.
         """
+        logger.debug("Replacing named entities for token list: {}".format(token_list))
         new_text_token_list = []
         entities = {}
         for token in token_list:
@@ -63,6 +74,8 @@ class GrllPreprocessor:
             else:
                 raise Exception("Failed to recognize if the token had an entity.")
 
+        logger.debug("New token list: {}".format(new_text_token_list))
+        logger.debug("Entities: {}".format(entities))
         return new_text_token_list, entities
 
     def retrieve_full_entity_from_token(self, token):
@@ -74,6 +87,7 @@ class GrllPreprocessor:
         Returns:
             full_entity_txt: A string representing the full entity.
         """
+        logger.debug("Retrieving the full entity from token {}".format(token))
         if token.ent_iob_ != "B":
             raise Exception("The token is not the beginning of a spacy entity.")
 
@@ -83,6 +97,7 @@ class GrllPreprocessor:
                 t.append(token.text)
             else:
                 break
+        logger.debug("Entity retrieved {}".format(" ".join(t).encode("utf8")))
         return " ".join(t)
 
     def replace_unknown_entities(self, tokens_list, entities):
@@ -96,6 +111,7 @@ class GrllPreprocessor:
             tokens_list: modified list of token to text with <unk>
             entities: modified dict with <unk> entities added
         """
+        logger.debug("Replacing unknown entities in: \n{}\nwith original entities:\n{}".format(tokens_list, entities))
         if self._word_vocab is None:
             raise Exception("Can't replace unknown entities without a previously defined word_vocab")
 
@@ -110,5 +126,5 @@ class GrllPreprocessor:
                     new_entities[u"<unk>"] = [token]
             else:
                 new_tokens_list.append(token)
-
+        logger.debug("New tokens list: \n{}\nnew entities:\n{}".format(new_tokens_list, new_entities))
         return new_tokens_list, new_entities

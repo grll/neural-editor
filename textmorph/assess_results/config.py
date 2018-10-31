@@ -1,8 +1,9 @@
 import json
 from os.path import join, dirname
-from logger import GrllLogger
+import logging
 
-logger = GrllLogger(name="assess_results", level="DEBUG")
+logger = logging.getLogger("assess_results")
+logger.propagate = False
 
 class GrllConfig:
     """ Handle multiple config when multiple runs are defined.
@@ -29,7 +30,7 @@ class GrllConfig:
             self._config = {}
             for k,v in self._data["global_config"].items():
                 self._config[k] = v  # Set global config attributes that are overridden in each runs.
-        logger.info("{} config(s) successfully loaded from {}.".format(len(self._data["runs_config"]), config_file_path))
+        logger.info("{} config(s) successfully loaded from '{}'.".format(len(self._data["runs_config"]), config_file_path))
 
     def __iter__(self):
         """ Yield individual config_run one by one merging the individual config with the global config already in place

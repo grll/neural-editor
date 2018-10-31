@@ -2,8 +2,8 @@ import logging
 
 class GrllLogger():
     """ Define a custom logger to handle input/output. """
-    def __init__(self, name="default", level="DEBUG"):
-        self._logger = logging.getLogger(name)
+    def __init__(self, level="DEBUG"):
+        self._logger = logging.getLogger("assess_results")
 
         levels = {
             "DEBUG": logging.DEBUG,
@@ -23,17 +23,17 @@ class GrllLogger():
         self._logger.addHandler(console_handler)
 
     def debug(self, msg, *args, **kwargs):
-        self._logger.debug(msg, args, kwargs)
+        self._logger.debug(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
-        self._logger.info(msg, args, kwargs)
+        self._logger.info(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
-        self._logger.warning(msg, args, kwargs)
+        self._logger.warning(msg, *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
-        self._logger.error(msg, args, kwargs)
+        self._logger.error(msg, *args, **kwargs)
 
     def critical(self, msg, *args, **kwargs):
-        self._logger.critical(msg, args, kwargs)
+        self._logger.critical(msg, *args, **kwargs)
 

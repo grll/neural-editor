@@ -1,6 +1,11 @@
 import codecs
 from os.path import join
 from textmorph import data
+import logging
+
+logger = logging.getLogger("assess_results")
+logger.propagate = False
+
 
 class GrllDataLoader:
     """ Flexible dataloader for the neural editor generative model.
@@ -19,6 +24,7 @@ class GrllDataLoader:
             data_type (str): Type of data to load among possible values are: ["one_line_one_sentence"]
             preprocessor: A preprocessor to process the data must implement the preprocess method.
         """
+        logger.info("Initializing the data loader.")
         dataset_dir = join(data.root, foldername)
         file_path = join(dataset_dir, filename)
         with codecs.open(file_path, "rb", encoding="utf-8") as f:
@@ -35,6 +41,7 @@ class GrllDataLoader:
         """ Yield data samples one by one. """
         if self.data_type == "one_line_one_sentence":
             for data in self._data:
+                logger.debug("Yielding sentence: {}".format(data.encode("utf8")))
                 yield data
         else:
             raise NotImplementedError
@@ -51,6 +58,7 @@ class GrllDataLoader:
         for data in self.generate_one_sample():
             if self.data_type == "one_line_one_sentence":
                 preprocessed_sentence, entities = self.preprocessor.preprocess(data)
+                logger.debug("Yielding Following Data:\npreprocessed_sentence:{}\nentities:{}\ndata:{}".format(preprocessed_sentence.encode("utf8"), entities, data.encode("utf8")))
                 yield preprocessed_sentence, entities, data
             else:
                 raise NotImplementedError
