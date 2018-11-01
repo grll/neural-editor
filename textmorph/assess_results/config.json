@@ -1,5 +1,6 @@
 {
   "global_config": {
+    "mode": "normal",
     "logger": {
       "console_level": "INFO",
       "file_level": "DEBUG"
@@ -12,6 +13,23 @@
     }
   },
   "runs_config": [
+    {
+      "mode": "debug",
+      "lang": "de",
+      "edit_model": {
+        "exp_num": 6
+      },
+      "data_loader": {
+        "preprocess": {
+          "show": false,
+          "filename": "preprocess_results_wo_word_vocab.txt"
+        },
+        "force_preprocessing": false
+      },
+      "edition": {
+        "number_of_edit_vector": 5
+      }
+    },
     {
       "lang": "de",
       "edit_model": {

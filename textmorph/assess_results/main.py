@@ -3,8 +3,9 @@ from editor import GrllNeuralEditor
 from config import GrllConfig
 from data_loader import GrllDataLoader
 from preprocess import GrllPreprocessor
+from postprocess import GrllPostprocessor
 from sentence import Sentence
-from results import Results
+from results import GrllResults
 from textmorph import data
 from gtd.io import Workspace, sub_dirs
 import re
@@ -16,14 +17,16 @@ import logging
 # basic logging setup
 logging_setup()
 
-
 # Loading the Configs
 configs = GrllConfig("textmorph/assess_results/config.json")
 
 # Workspace setup
 exps_workspace = Workspace(data.workspace.assess_results_runs)
-exp_num = max([int(re.search('(\d+)$', sub_dir_path).group(0)) for sub_dir_path in sub_dirs(exps_workspace.root)]) + 1
-exp_folder_name = "exp_"+str(exp_num)
+if len(sub_dirs(exps_workspace.root)) == 0:
+    exp_folder_name = "exp_" + str(0)
+else:
+    exp_num = max([int(re.search('(\d+)$', sub_dir_path).group(0)) for sub_dir_path in sub_dirs(exps_workspace.root)]) + 1
+    exp_folder_name = "exp_"+str(exp_num)
 exps_workspace.add_dir(exp_folder_name, exp_folder_name)
 runs_workspace = Workspace(getattr(exps_workspace, exp_folder_name))
 
@@ -63,7 +66,8 @@ for idx, config_run in enumerate(configs):
 
     if editor is not None:
         logging.info("Editing the sentences and generating results.")
-        results = Results()
+        results = GrllResults()
+        postprocessor = GrllPostprocessor()
         for preprocessed_sentence, entities, original_sentence in dataloader.generate_one_preprocessed_sample():
             sentence = Sentence(preprocessed_sentence.split(" "),
                                 entities=entities,
@@ -73,10 +77,14 @@ for idx, config_run in enumerate(configs):
             batch = [sentence] * config_run["edition"]["number_of_edit_vector"]
 
             _, edit_traces = editor.edit(batch)
+            filtered_candidates = postprocessor.postprocess_filter(edit_traces, min_number_of_token=4)
+            logging.warning(filtered_candidates)
+            results.add_candidates(filtered_candidates)
 
-            results.add_edit_traces(edit_traces)
+            if config_run["mode"] == "debug":
+                break
 
-        best_results = results.compute_overall_best_n_results(n=10000)
+        results.sort()
         generated_sentences = results.sentences_without_entities_and_back_original_capitalization(best_results)
 
         dataset_dir = join(data.root, config_run["data_loader"]["dataset_foldername"])
