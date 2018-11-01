@@ -7,20 +7,17 @@ from textmorph.edit_model.editor import EditTrace
 from textmorph.edit_model.encoder import EncoderOutput
 import logging
 
-logger = logging.getLogger("assess_results")
-logger.propagate = False
-
 class GrllNeuralEditor():
     """Perform modified edition function on an existing editor model."""
 
     def __init__(self, editor):
         """Initialise with an editor from the neural editor model."""
-        logger.info("Initialize the modified Editor.")
+        logging.info("Initialize the modified Editor.")
         self.editor = editor
 
     def edit(self, examples, max_seq_length=35, beam_size=5, batch_size=500):
         """Add one argument random_edit_vector wich enforce edition with a random vector."""
-        logger.debug("Performing an edit on {} examples:\n {}".format(len(examples), examples))
+        logging.debug("Performing an edit on {} examples:\n {}".format(len(examples), examples))
         beam_list = []
         edit_traces = []
         for batch in chunks(examples, batch_size / beam_size):
@@ -36,7 +33,6 @@ class GrllNeuralEditor():
             examples)
         encoder_input = self.editor.encoder.preprocess(source_words, insert_words, insert_exact_words, delete_words,
                                                        delete_exact_words, edit_embed)
-        # encoder_output = self.editor.encoder(encoder_input, draw_samples=random_edit_vector, draw_p = random_edit_vector)
         encoder_output = self.encoder_generate_edits(encoder_input)
 
         beams, decoder_traces = self.editor.test_decoder_beam.decode(examples, encoder_output,

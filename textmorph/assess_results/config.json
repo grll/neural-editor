@@ -1,9 +1,14 @@
 {
   "global_config": {
+    "logger": {
+      "console_level": "INFO",
+      "file_level": "DEBUG"
+    },
     "data_loader": {
       "dataset_foldername": "SC_datasets",
       "dataset_filename": "SCinternal.txt",
-      "data_type": "one_line_one_sentence"
+      "data_type": "one_line_one_sentence",
+      "force_preprocessing": true
     }
   },
   "runs_config": [

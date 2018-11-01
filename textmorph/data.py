@@ -20,7 +20,7 @@ workspace.add_dir('lm_runs', 'lm_runs')
 workspace.add_dir('retriever_runs', 'retriever_runs')
 
 # Text Generation Folder
-workspace.add_dir('textgen_runs', 'textgen_runs')
+workspace.add_dir('assess_results_runs', 'assess_results_runs')
 
 # user IDs
 workspace.add_file('user_ids', 'user_ids.json')

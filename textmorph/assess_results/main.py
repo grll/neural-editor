@@ -6,24 +6,42 @@ from preprocess import GrllPreprocessor
 from sentence import Sentence
 from results import Results
 from textmorph import data
+from gtd.io import Workspace, sub_dirs
+import re
 from os.path import dirname, join
-from logger import GrllLogger
+from writter import GrllWritter
+from logger import logging_setup, config_run_logging_setup
+import logging
+
+# basic logging setup
+logging_setup()
 
 
-logger = GrllLogger(level="DEBUG")
-
+# Loading the Configs
 configs = GrllConfig("textmorph/assess_results/config.json")
 
-for config_run in configs:
+# Workspace setup
+exps_workspace = Workspace(data.workspace.assess_results_runs)
+exp_num = max([int(re.search('(\d+)$', sub_dir_path).group(0)) for sub_dir_path in sub_dirs(exps_workspace.root)]) + 1
+exp_folder_name = "exp_"+str(exp_num)
+exps_workspace.add_dir(exp_folder_name, exp_folder_name)
+runs_workspace = Workspace(getattr(exps_workspace, exp_folder_name))
+
+for idx, config_run in enumerate(configs):
+    run_workspace = Workspace(getattr(runs_workspace, "run_" + str(idx)))
+    config_run_file_handler = config_run_logging_setup(getattr(run_workspace, "stdout.txt"),
+                                                       config_run["logger"]["console_level"],
+                                                       config_run["logger"]["file_level"])
+    GrllWritter.write(join(run_workspace.root, "config.txt"), config_run)
 
     exp = None
     if str(config_run["edit_model"]["exp_num"]).isdigit():  # If you don't want to load any model specify a non digit exp_num.
-        logger.info("Loading the model from experiment #{}.".format(config_run["edit_model"]["exp_num"]))
+        logging.info("Loading the model from experiment #{}.".format(config_run["edit_model"]["exp_num"]))
         experiments = MyEditTrainingRuns()
         exp = experiments[config_run["edit_model"]["exp_num"]]
 
     if exp is None:
-        logger.info("No model was loaded: no editor or word_vocab will be available in this config.".format(config_run["edit_model"]["exp_num"]))
+        logging.info("No model was loaded: no editor or word_vocab will be available in this config.".format(config_run["edit_model"]["exp_num"]))
         editor = None
         word_vocab = None
     else:
@@ -38,16 +56,13 @@ for config_run in configs:
                                 preprocessor)
 
     dataloader.preprocess_all(config_run["data_loader"]["force_preprocessing"])
-    if config_run["data_loader"]["preprocess"]["show"]:
-        dataset_dir = join(data.root, config_run["data_loader"]["dataset_foldername"])
-        file_path = join(dataset_dir, config_run["data_loader"]["preprocess"]["filename"])
-        for preprocessed_sentence, entities, original_sentence in dataloader.generate_one_preprocessed_sample():
-            logger.log_preprocessed_sentences(file_path, original_sentence.encode("utf8"), preprocessed_sentence.encode("utf8"), str(entities))
-            f.write(original_sentence.encode("utf8") + "\n")
-            f.write("> " + preprocessed_sentence.encode("utf8") + "\n")
-            f.write("> " + str(entities) + "\n\n")
+
+    if config_run["data_loader"]["preprocess"]["show"]:  # write to file the output of the preprocessing phase
+        file_path = join(run_workspace.root, config_run["data_loader"]["preprocess"]["filename"])
+        GrllWritter.write_preprocessed_samples(file_path, dataloader.generate_one_preprocessed_sample())
 
     if editor is not None:
+        logging.info("Editing the sentences and generating results.")
         results = Results()
         for preprocessed_sentence, entities, original_sentence in dataloader.generate_one_preprocessed_sample():
             sentence = Sentence(preprocessed_sentence.split(" "),
@@ -69,3 +84,5 @@ for config_run in configs:
         with open(file_path, "wb") as f:
             for sentence in generated_sentences:
                 f.write(sentence.encode("utf8") + "\n")
+
+    logging.getLogger().removeHandler(config_run_file_handler)
