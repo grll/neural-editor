@@ -13,7 +13,9 @@ class GrllResults:
         return len(self.candidates)
 
     def add_candidates(self, candidates):
-        self.candidates += candidates
+        for candidate in candidates:
+            if candidate["sequence"] not in [c["sequence"] for c in self.candidates]:
+                self.candidates.append(candidate)
 
     def sort(self,):
         """ Sort the candidates stored in results"""

@@ -15,7 +15,7 @@ class GrllNeuralEditor():
         logging.info("Initialize the modified Editor.")
         self.editor = editor
 
-    def edit(self, examples, max_seq_length=35, beam_size=5, batch_size=500):
+    def edit(self, examples, max_seq_length=35, beam_size=5, batch_size=1024):
         """Add one argument random_edit_vector wich enforce edition with a random vector."""
         logging.debug("Performing an edit on {} examples:\n {}".format(len(examples), examples))
         beam_list = []
