@@ -85,6 +85,7 @@ for idx, config_run in enumerate(configs):
                 break
 
         results.sort()
+
         generated_sentences = results.sentences_without_entities_and_back_original_capitalization(best_results)
 
         dataset_dir = join(data.root, config_run["data_loader"]["dataset_foldername"])

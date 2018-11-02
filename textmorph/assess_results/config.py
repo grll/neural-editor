@@ -46,7 +46,7 @@ class GrllConfig:
 
     def __getitem__(self, item):
         """ Get a specific run using [item] """
-        return self.merge(self._data["runs_config"][i], self._config)
+        return self.merge(self._data["runs_config"][item], self._config)
 
     def merge(self, truth_dict, completing_dict):
         """

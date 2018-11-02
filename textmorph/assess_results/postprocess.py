@@ -1,7 +1,16 @@
+import logging
+
 
 class GrllPostprocessor:
+    """ Postprocess the data generated.
+
+    Attributes
+        forbidden_tokens: list of tokens to remove from generation
+        possible_entities: a list of token considered as named entity
+    """
 
     def __init__(self):
+        """ Initialize attributes. """
         self.forbidden_tokens = [u"\n", u"\t", u"''", u"(", u")"]
         self.possible_entities = [u"<loc>", u"<org>", u"<ordinal>", u"<per>", u"<unk>"]
 
@@ -19,15 +28,19 @@ class GrllPostprocessor:
         Returns:
             list of filtered candidate (dict {sentence, sequence, prob})
         """
+        logging.debug("Starting the postprocess filtering on {} edit_traces.".format(len(edit_traces)))
         new_candidates = []
         sequences = []
         for edit_trace in edit_traces:
             for candidate in edit_trace.decoder_trace.candidates:
+                logging.debug("Currently filtering {}.".format(" ".join(candidate)))
                 new_sequence = []
                 for token in candidate.sequence:
                     if token not in self.forbidden_tokens:
                         new_sequence.append(token)
+                logging.debug("With forbidden tokens out {}.".format(" ".join(new_sequence)))
                 if len(new_sequence) < min_number_of_token:
+                    logging.debug("The candidate was discarded because it's len was < {}".format(min_number_of_token))
                     break  # forget about this sequence
 
                 if new_sequence not in sequences and new_sequence != edit_trace.example.source_words:
@@ -35,11 +48,22 @@ class GrllPostprocessor:
                         new_candidate = {"sentence": edit_trace.example, "sequence": new_sequence, "prob": candidate.prob}
                         new_candidates.append(new_candidate)
                         sequences.append(new_sequence)
+                        logging.debug("The candidate sequence was successfully added to the new_candidates.")
+                    else:
+                        logging.debug("The candidate sequence didn't pass entities_check.")
+                else:
+                    logging.debug("The candidate was either similar to the source or already in the saved sequences.")
 
         return new_candidates
 
     def entities_check(self, token_sequence, entities):
-        """Check that the candidate sequence dont have more named entity than the preprocessed sequence (for replacement)"""
+        """
+        Check that the candidate sequence dont have more named entity than the preprocessed sequence (for replacement)
+
+        Args
+            token_sequence: a list of tokens in text format (unicode) to check.
+            entities: a dict of entities to check accordingly.
+        """
         entities_count = {k: len(v) for k, v in entities.items()}
         for token in token_sequence:
             for special_token in self.possible_entities:
