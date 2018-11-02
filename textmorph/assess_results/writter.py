@@ -1,5 +1,6 @@
 import logging
 import json
+from prettytable import PrettyTable
 
 class GrllWritter():
     """ Different writting function to file. """
@@ -36,6 +37,21 @@ class GrllWritter():
         if type(content) is dict:
             with open(path, "wb") as f:
                 f.write(json.dumps(content, indent=4))
+        elif type(content) is list:
+            if type(content[0]) is unicode:
+                with open(path, "wb") as f:
+                    for line in content:
+                        f.write(line.encode("utf8") + "\n")
+            else:
+                raise NotImplementedError
         else:
             raise NotImplementedError
 
+    @classmethod
+    def write_pretty_metrics(cls, path, metrics):
+        x = PrettyTable()
+        x.field_names = list(metrics[0].keys())
+        for metric in metrics:
+            x.add_row(list(metric.values()))
+        with open(path, "wb") as f:
+            f.write(x.get_string())

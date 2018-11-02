@@ -6,6 +6,7 @@ from preprocess import GrllPreprocessor
 from postprocess import GrllPostprocessor
 from sentence import Sentence
 from results import GrllResults
+from metrics import GrllMetrics
 from textmorph import data
 from gtd.io import Workspace, sub_dirs
 import re
@@ -78,20 +79,32 @@ for idx, config_run in enumerate(configs):
 
             _, edit_traces = editor.edit(batch)
             filtered_candidates = postprocessor.postprocess_filter(edit_traces, min_number_of_token=4)
-            logging.warning(filtered_candidates)
             results.add_candidates(filtered_candidates)
 
             if config_run["mode"] == "debug":
                 break
 
+        logging.info("{} filtered candidates were generated.".format(len(results)))
         results.sort()
 
-        generated_sentences = results.sentences_without_entities_and_back_original_capitalization(best_results)
+        metrics = []
+        for dataset_size in config_run["generation"]["dataset_sizes"]:
+            logging.info("Attempting to generate dataset of size {}".format(dataset_size))
+            generated_sentences, original_sentences = postprocessor.generate_n_sentences(results, n=dataset_size)
+            logging.info("Dataset generated has size {}".format(len(generated_sentences)))
 
-        dataset_dir = join(data.root, config_run["data_loader"]["dataset_foldername"])
-        file_path = join(dataset_dir, "generated.txt")
-        with open(file_path, "wb") as f:
-            for sentence in generated_sentences:
-                f.write(sentence.encode("utf8") + "\n")
+            bleu_score = GrllMetrics.compute_bleu_score(generated_sentences, original_sentences)
+            perplexity = GrllMetrics.compute_perplexity([result["prob"] for result in results[:dataset_size]],
+                                                        [len(result["sequence"]) for result in results[:dataset_size]])
+
+            logging.info("BLEU score reported on this dataset: {}".format(bleu_score))
+            logging.info("Perplexity reported on this dataset: {}".format(perplexity))
+            metrics.append({"size": len(generated_sentences), "bleu_score": bleu_score, "perplexity": perplexity})
+
+            file_path = join(run_workspace.root, "generated_"+str(len(generated_sentences))+".txt")
+            GrllWritter.write(file_path, generated_sentences)
+
+        file_path = join(run_workspace.root, "metrics.txt")
+        GrllWritter.write_pretty_metrics(file_path, metrics)
 
     logging.getLogger().removeHandler(config_run_file_handler)

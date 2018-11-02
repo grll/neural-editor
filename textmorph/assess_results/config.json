@@ -3,30 +3,119 @@
     "mode": "normal",
     "logger": {
       "console_level": "INFO",
-      "file_level": "DEBUG"
+      "file_level": "INFO"
     },
     "data_loader": {
       "dataset_foldername": "SC_datasets",
       "dataset_filename": "SCinternal.txt",
       "data_type": "one_line_one_sentence",
-      "force_preprocessing": true
+      "force_preprocessing": false,
+      "preprocess": {
+        "show": false
+      }
     }
   },
   "runs_config": [
     {
       "mode": "debug",
       "lang": "de",
+      "logger": {
+        "file_level": "DEBUG"
+      },
       "edit_model": {
         "exp_num": 6
       },
       "data_loader": {
         "preprocess": {
-          "show": false
-        },
-        "force_preprocessing": false
+          "show": true,
+          "filename": "preprocessing_output.txt"
+        }
       },
       "edition": {
         "number_of_edit_vector": 5
+      },
+      "generation": {
+        "dataset_sizes": [5, 10, 15]
+      }
+    },
+    {
+      "mode": "normal",
+      "lang": "de",
+      "logger": {
+        "file_level": "INFO"
+      },
+      "edit_model": {
+        "exp_num": 6
+      },
+      "edition": {
+        "number_of_edit_vector": 100
+      },
+      "generation": {
+        "dataset_sizes": [100, 500, 1000, 5000, 10000]
+      }
+    },
+    {
+      "mode": "normal",
+      "lang": "de",
+      "logger": {
+        "file_level": "INFO"
+      },
+      "edit_model": {
+        "exp_num": 6
+      },
+      "edition": {
+        "number_of_edit_vector": 200
+      },
+      "generation": {
+        "dataset_sizes": [100, 500, 1000, 5000, 10000]
+      }
+    },
+    {
+      "mode": "normal",
+      "lang": "de",
+      "logger": {
+        "file_level": "INFO"
+      },
+      "edit_model": {
+        "exp_num": 6
+      },
+      "edition": {
+        "number_of_edit_vector": 300
+      },
+      "generation": {
+        "dataset_sizes": [100, 500, 1000, 5000, 10000]
+      }
+    },
+    {
+      "mode": "normal",
+      "lang": "de",
+      "logger": {
+        "file_level": "INFO"
+      },
+      "edit_model": {
+        "exp_num": 6
+      },
+      "edition": {
+        "number_of_edit_vector": 400
+      },
+      "generation": {
+        "dataset_sizes": [100, 500, 1000, 5000, 10000]
+      }
+    },
+    {
+      "mode": "normal",
+      "lang": "de",
+      "logger": {
+        "file_level": "INFO"
+      },
+      "edit_model": {
+        "exp_num": 6
+      },
+      "edition": {
+        "number_of_edit_vector": 500
+      },
+      "generation": {
+        "dataset_sizes": [100, 500, 1000, 5000, 10000]
       }
     }
   ]
