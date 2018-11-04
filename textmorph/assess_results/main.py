@@ -12,11 +12,14 @@ from gtd.io import Workspace, sub_dirs
 import re
 from os.path import dirname, join
 from writter import GrllWritter
-from logger import logging_setup, config_run_logging_setup
+from logger import logging_setup, config_run_logging_setup, handle_exception
+import sys
 import logging
+from prettytable import PrettyTable
 
 # basic logging setup
 logging_setup()
+sys.excepthook = handle_exception
 
 # Loading the Configs
 configs = GrllConfig("textmorph/assess_results/config.json")
@@ -69,6 +72,12 @@ for idx, config_run in enumerate(configs):
         logging.info("Editing the sentences and generating results.")
         results = GrllResults()
         postprocessor = GrllPostprocessor()
+        log_data = {
+            "batches_len": [],
+            "edit_traces_len": [],
+            "filtered_candidates_len": [],
+            "cum_results_len": []
+        }
         for preprocessed_sentence, entities, original_sentence in dataloader.generate_one_preprocessed_sample():
             sentence = Sentence(preprocessed_sentence.split(" "),
                                 entities=entities,
@@ -76,14 +85,26 @@ for idx, config_run in enumerate(configs):
                                 preprocessed_sentence=preprocessed_sentence)
 
             batch = [sentence] * config_run["edition"]["number_of_edit_vector"]
-
             _, edit_traces = editor.edit(batch)
             filtered_candidates = postprocessor.postprocess_filter(edit_traces, min_number_of_token=4)
             results.add_candidates(filtered_candidates)
 
+            log_data["batches_len"].append(len(batch))
+            log_data["edit_traces_len"].append(len(edit_traces))
+            log_data["filtered_candidates_len"].append(len(filtered_candidates))
+            log_data["cum_results_len"].append(len(results))
+
             if config_run["mode"] == "debug":
                 break
 
+        x = PrettyTable()
+        x.field_names = ["batches_len", "edit_traces_len", "filtered_candidates_len", "cum_results_len"]
+        for batch_len, edit_trace_len, filtered_candidate_len, cum_result_len in zip(log_data["batches_len"],
+                                                                                     log_data["edit_traces_len"],
+                                                                                     log_data["filtered_candidates_len"],
+                                                                                     log_data["cum_results_len"]):
+            x.add_row([batch_len, edit_trace_len, filtered_candidate_len, cum_result_len])
+        logging.info("\n" + x.get_string())
         logging.info("{} filtered candidates were generated.".format(len(results)))
         results.sort()
 

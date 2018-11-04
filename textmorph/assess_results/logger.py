@@ -20,3 +20,11 @@ def config_run_logging_setup(file_path, console_level, file_level):
     consoleHandler.setLevel(getattr(logging, console_level))
     config_run_file_handler.setLevel(getattr(logging, file_level))
     return config_run_file_handler
+
+# Handle uncaught exception program wide
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    rootLogger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))

@@ -23,7 +23,7 @@
         "file_level": "DEBUG"
       },
       "edit_model": {
-        "exp_num": 6
+        "exp_num": 12
       },
       "data_loader": {
         "preprocess": {
@@ -45,7 +45,7 @@
         "file_level": "INFO"
       },
       "edit_model": {
-        "exp_num": 6
+        "exp_num": 12
       },
       "edition": {
         "number_of_edit_vector": 100
@@ -61,7 +61,7 @@
         "file_level": "INFO"
       },
       "edit_model": {
-        "exp_num": 6
+        "exp_num": 12
       },
       "edition": {
         "number_of_edit_vector": 200
@@ -77,7 +77,7 @@
         "file_level": "INFO"
       },
       "edit_model": {
-        "exp_num": 6
+        "exp_num": 12
       },
       "edition": {
         "number_of_edit_vector": 300
@@ -93,7 +93,7 @@
         "file_level": "INFO"
       },
       "edit_model": {
-        "exp_num": 6
+        "exp_num": 12
       },
       "edition": {
         "number_of_edit_vector": 400
@@ -109,7 +109,7 @@
         "file_level": "INFO"
       },
       "edit_model": {
-        "exp_num": 6
+        "exp_num": 12
       },
       "edition": {
         "number_of_edit_vector": 500
