@@ -1,6 +1,8 @@
 from os.path import join, dirname, abspath
 import logging
 import yaml
+from helpers import Dict2Object
+
 
 class GrllConfig:
     """ Handle multiple config when multiple runs are defined.
@@ -38,7 +40,7 @@ class GrllConfig:
         for run_config in self._data["runs_config"]:
             run_config = self.merge(run_config, self._config)
             logging.info("The following config has been loaded: \n {}".format(run_config))
-            yield run_config
+            yield GrllConfigRun(run_config)
 
     def __len__(self):
         """ Return the number of run_configs """
@@ -48,7 +50,7 @@ class GrllConfig:
         """ Get a specific run using [item] """
         run_config = self.merge(self._data["runs_config"][item], self._config)
         logging.info("The following config has been loaded: \n {}".format(run_config))
-        return run_config
+        return GrllConfigRun(run_config)
 
     def merge(self, truth_dict, completing_dict):
         """
@@ -69,3 +71,11 @@ class GrllConfig:
                 if type(v) == dict and type(truth_dict[k]) == dict:
                     self.merge(truth_dict[k], v)
         return truth_dict
+
+
+class GrllConfigRun (Dict2Object):
+    """ Represent a singular config run (Create a Object from a dictionary)"""
+
+    def write_to_file(self, path):
+        with open(path, "wb") as f:
+            f.write(yaml.safe_dump(self))

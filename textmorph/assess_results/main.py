@@ -39,7 +39,7 @@ for idx, config_run in enumerate(configs):
     config_run_file_handler = config_run_logging_setup(getattr(run_workspace, "stdout.txt"),  # setup the logs for the given config_run
                                                        config_run["logger"]["console_level"],
                                                        config_run["logger"]["file_level"])
-    GrllWritter.write(join(run_workspace.root, "config.txt"), config_run)  # write the current run_config to config.txt
+    config_run.write_to_file(join(run_workspace.root, "config.txt")) # write the current run_config to config.txt
 
     # 1. Loading the model
     edit_model = MyEditTrainingRuns().load_edit_model(config_run["edit_model"]["exp_num"])  # load the edit_model.
