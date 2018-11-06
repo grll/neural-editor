@@ -1,0 +1,28 @@
+global_config:
+  mode: "debug"                         # possible values: ["debug", "normal"]
+  lang: "de"                            # possible values: ["de"]
+
+  logger:
+    console_level: "INFO"
+    file_level: "DEBUG"
+
+  data_loader:
+    dataset_foldername: "SC_datasets"   # must be a valid folder in data.root (/data)
+    dataset_filename: "SCinternal.txt"  # must be a valid filename in the dataset_folder
+    data_type: "one_line_one_sentence"  # possible values: ["one_line_one_sentence"]
+    preprocess:
+      force: True                       # weather to force recomputing the preprocessing
+      show: True                        # weather to output the preprocessing results
+
+  edit_model:
+    exp_num: 12                         # the num of the experiment to load
+    random_edit_vector_number: 5        # number of random edit vector to use
+
+  generation:
+    dataset_sizes:                      # list of sizes to try to generate
+      - 5
+      - 10
+      - 15
+
+runs_config:
+  -

@@ -17,12 +17,14 @@ import sys
 import logging
 from prettytable import PrettyTable
 
+#parse arg to the config file with default to default
+
 # basic logging setup
 logging_setup()
 sys.excepthook = handle_exception
 
 # Loading the Configs
-configs = GrllConfig("textmorph/assess_results/config.json")
+configs = GrllConfig()
 
 # Workspace setup
 exps_workspace = Workspace(data.workspace.assess_results_runs)

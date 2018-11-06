@@ -1,6 +1,6 @@
-import json
-from os.path import join, dirname
+from os.path import join, dirname, abspath
 import logging
+import yaml
 
 class GrllConfig:
     """ Handle multiple config when multiple runs are defined.
@@ -18,15 +18,15 @@ class GrllConfig:
         """
         logging.info("Loading the configs.")
         if config_file_path == "default":
-            config_file_path = join(dirname("__FILE__"), "config.json")
+            config_folder = join(dirname(abspath(__file__)), "configs")
+            config_file_path = join(config_folder, "default.yml")
 
-        if config_file_path is not "nofile":
-            with open(config_file_path, "r") as f:
-                self._data = json.load(f)
+        with open(config_file_path, "r") as f:
+            self._data = yaml.safe_load(f)
 
-            self._config = {}
-            for k,v in self._data["global_config"].items():
-                self._config[k] = v  # Set global config attributes that are overridden in each runs.
+        self._config = {}
+        for k, v in self._data["global_config"].items():
+            self._config[k] = v  # Set global config attributes that are overridden in each runs.
         logging.info("{} config(s) successfully loaded from '{}'.".format(len(self._data["runs_config"]), config_file_path))
 
     def __iter__(self):
@@ -46,7 +46,9 @@ class GrllConfig:
 
     def __getitem__(self, item):
         """ Get a specific run using [item] """
-        return self.merge(self._data["runs_config"][item], self._config)
+        run_config = self.merge(self._data["runs_config"][item], self._config)
+        logging.info("The following config has been loaded: \n {}".format(run_config))
+        return run_config
 
     def merge(self, truth_dict, completing_dict):
         """

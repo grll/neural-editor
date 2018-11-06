@@ -60,6 +60,7 @@ RUN pip install ipdb
 RUN pip install spacy
 RUN python -m spacy download en_core_web_lg
 RUN python -m spacy download de_core_news_sm
+RUN python -m pip install pyyaml
 
 ENV PYTHONPATH /code
 ENV TEXTMORPH_DATA /data
