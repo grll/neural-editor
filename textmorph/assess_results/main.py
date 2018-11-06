@@ -8,7 +8,7 @@ from metrics import GrllMetrics
 from textmorph import data
 from gtd.io import Workspace, sub_dirs
 import re
-from os.path import dirname, join
+from os.path import join
 from writter import GrllWritter
 from logger import logging_setup, config_run_logging_setup, handle_exception
 import sys
