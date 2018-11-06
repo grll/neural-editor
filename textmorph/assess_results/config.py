@@ -73,9 +73,12 @@ class GrllConfig:
         return truth_dict
 
 
-class GrllConfigRun (Dict2Object):
+class GrllConfigRun:
     """ Represent a singular config run (Create a Object from a dictionary)"""
+    def __init__(self, dict):
+        self.obj = Dict2Object(dict)
+        self._raw = dict
 
     def write_to_file(self, path):
         with open(path, "wb") as f:
-            f.write(yaml.safe_dump(self))
+            f.write(yaml.dump(self._raw))

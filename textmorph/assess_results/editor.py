@@ -106,11 +106,11 @@ class GrllNeuralEditor():
                                 original_sentence=original_sentence,
                                 preprocessed_sentence=preprocessed_sentence)
 
-            batch = [sentence] * config_run_edit_model["random_edit_vector_number"]
+            batch = [sentence] * config_run_edit_model.random_edit_vector_number
 
             _, edit_traces = self.edit(batch)
             filtered_candidates = postprocessor.postprocess_filter(edit_traces,
-                                                                   min_number_of_token=config_run_edit_model["min_number_of_token"])
+                                                                   min_number_of_token=config_run_edit_model.min_number_of_token)
             results.add_candidates(filtered_candidates)
 
             log_data["batches_len"].append(len(batch))
@@ -119,7 +119,7 @@ class GrllNeuralEditor():
             log_data["cum_results_len"].append(len(results))
 
             if config_run_edit_model["max_iter"] is not None:
-                if idx == (config_run_edit_model["max_iter"] - 1):
+                if idx == (config_run_edit_model.max_iter - 1):
                     break
 
         x = PrettyTable()  # logging the log_data in a prettytable.

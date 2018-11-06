@@ -20,7 +20,7 @@ class MyEditTrainingRuns(EditTrainingRuns):
         Returns:
             edit_model: exp.editor coming from the experiment.
         """
-        logging.info("Loading the model from experiment #{}.".format(config_run["edit_model"]["exp_num"]))
+        logging.info("Loading the model from experiment #{}.".format(exp_num))
         return self[exp_num].editor
 
 class MyEditTrainingRun(EditTrainingRun):

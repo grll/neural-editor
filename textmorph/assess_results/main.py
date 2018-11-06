@@ -35,36 +35,37 @@ runs_workspace = Workspace(getattr(exps_workspace, exp_folder_name))
 
 for idx, config_run in enumerate(configs):
     # 0. Setup the Config Run
+    config_ = config_run.obj
     run_workspace = Workspace(getattr(runs_workspace, "run_" + str(idx)))  # setup the workspace for the given run
     config_run_file_handler = config_run_logging_setup(getattr(run_workspace, "stdout.txt"),  # setup the logs for the given config_run
-                                                       config_run["logger"]["console_level"],
-                                                       config_run["logger"]["file_level"])
+                                                       config_.logger.console_level,
+                                                       config_.logger.file_level)
     config_run.write_to_file(join(run_workspace.root, "config.txt")) # write the current run_config to config.txt
 
     # 1. Loading the model
-    edit_model = MyEditTrainingRuns().load_edit_model(config_run["edit_model"]["exp_num"])  # load the edit_model.
+    edit_model = MyEditTrainingRuns().load_edit_model(config_.edit_model.exp_num)  # load the edit_model.
     editor = GrllNeuralEditor(edit_model)  # create custom editor with random edition vectors function.
     word_vocab = edit_model.train_decoder.word_vocab  # load the word vocabulary used with this specific edit_model.
 
     # 2. Preprocessing & data loading
-    preprocessor = GrllPreprocessor(word_vocab=word_vocab, lang=config_run["lang"])
-    dataloader = GrllDataLoader(config_run["data_loader"]["dataset_foldername"],
-                                config_run["data_loader"]["dataset_filename"],
-                                config_run["data_loader"]["data_type"],
+    preprocessor = GrllPreprocessor(word_vocab=word_vocab, lang=config_.lang)
+    dataloader = GrllDataLoader(config_.data_loader.dataset_foldername,
+                                config_.data_loader.dataset_filename,
+                                config_.data_loader.data_type,
                                 preprocessor)
-    dataloader.preprocess_all(config_run["data_loader"]["preprocess"]["force"])  # preprocess all or retrieve from file
-    if config_run["data_loader"]["preprocess"]["show"]:  # write to file the output of the preprocessing phase
-        file_path = join(run_workspace.root, config_run["data_loader"]["preprocess"]["filename"])
+    dataloader.preprocess_all(config_.data_loader.preprocess.force)  # preprocess all or retrieve from file
+    if config_.data_loader.preprocess.show:  # write to file the output of the preprocessing phase
+        file_path = join(run_workspace.root, config_.data_loader.preprocess.filename)
         GrllWritter.write_preprocessed_samples(file_path, dataloader.generate_one_preprocessed_sample())
 
     # 3. Running the model with preprocessed data
     postprocessor = GrllPostprocessor()
-    results = editor.run_model(config_run, dataloader, postprocessor)
+    results = editor.run_model(config_.edit_model, dataloader, postprocessor)
     results.sort()
 
     # 4. Generate the Datasets & Metrics
     metrics = []
-    for dataset_size in config_run["generation"]["dataset_sizes"]:
+    for dataset_size in config_.generation.dataset_sizes:
         generated_sentences, original_sentences = postprocessor.generate_n_sentences(results, n=dataset_size)
 
         bleu_score = GrllMetrics.compute_bleu_score(generated_sentences, original_sentences)
