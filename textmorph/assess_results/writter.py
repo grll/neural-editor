@@ -1,5 +1,5 @@
 import logging
-import json
+import yaml
 from prettytable import PrettyTable
 
 class GrllWritter():
@@ -36,7 +36,7 @@ class GrllWritter():
     def write(cls, path, content):
         if type(content) is dict:
             with open(path, "wb") as f:
-                f.write(json.dumps(content, indent=4))
+                f.write(yaml.safe_dump(content))
         elif type(content) is list:
             if type(content[0]) is unicode:
                 with open(path, "wb") as f:
