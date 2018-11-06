@@ -1,6 +1,7 @@
 from os.path import realpath, join, dirname
 from textmorph.edit_model.training_run import EditTrainingRuns, EditTrainingRun
 from textmorph import data
+import logging
 
 class MyEditTrainingRuns(EditTrainingRuns):
     """ Inherit from EditTraining Runs used here to prevent loading of the whole dataset file. """
@@ -9,6 +10,18 @@ class MyEditTrainingRuns(EditTrainingRuns):
         data_dir = data.workspace.edit_runs
         src_dir = dirname(dirname(dirname(realpath('__file__'))))  # root of the repo
         super(EditTrainingRuns, self).__init__(data_dir, src_dir, MyEditTrainingRun, check_commit=False)
+
+    def load_edit_model(self, exp_num):
+        """ Load and return an edit_model from an exp_num.
+
+        Args:
+            exp_num: a number representing a training experiment from the neural editor model.
+
+        Returns:
+            edit_model: exp.editor coming from the experiment.
+        """
+        logging.info("Loading the model from experiment #{}.".format(config_run["edit_model"]["exp_num"]))
+        return self[exp_num].editor
 
 class MyEditTrainingRun(EditTrainingRun):
     """ The actual modification of the loading appears ot be in this class that is used in the class just above. """

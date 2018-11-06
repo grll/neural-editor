@@ -89,6 +89,7 @@ class GrllPostprocessor:
         Returns:
             generated_sentences, original_sentences: a list of generated sentences and its original sentences
         """
+        logging.info("Attempting to generate dataset of size {}".format(n))
         generated_sentences = []
         original_sentences = []
         for result in results[:n]:
@@ -99,6 +100,7 @@ class GrllPostprocessor:
             logging.debug("Generated sentence after capitalization: {}".format(" ".join(token_list).encode("utf8")))
             generated_sentences.append(" ".join(token_list))
             original_sentences.append(result["sentence"].original_sentence)
+        logging.info("Dataset generated has size {}".format(len(generated_sentences)))
         return generated_sentences, original_sentences
 
     def replace_entities(self, token_list, entities):

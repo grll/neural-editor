@@ -1,5 +1,6 @@
 from gtd.utils import bleu
 import numpy as np
+import logging
 
 class GrllMetrics:
 
@@ -18,6 +19,7 @@ class GrllMetrics:
         for original_sentence, generated_sentence in zip(original_sentences, generated_sentences):
             bleus.append(bleu(original_sentence.split(" "), generated_sentence.split(" ")))
         avg_bleu = np.mean(bleus)
+        logging.info("BLEU score reported on this dataset: {}".format(avg_bleu))
         return avg_bleu
 
     @classmethod
@@ -37,6 +39,7 @@ class GrllMetrics:
 
         entropy = - np.sum(logq_list) / np.sum(n_list)
         perplexity = 2.0 ** entropy
+        logging.info("Perplexity reported on this dataset: {}".format(perplexity))
         return perplexity
 
 

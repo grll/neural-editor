@@ -6,6 +6,11 @@ from gtd.utils import chunks
 from textmorph.edit_model.editor import EditTrace
 from textmorph.edit_model.encoder import EncoderOutput
 import logging
+from prettytable import PrettyTable
+
+from sentence import Sentence
+from results import GrllResults
+
 
 class GrllNeuralEditor():
     """Perform modified edition function on an existing editor model."""
@@ -72,3 +77,60 @@ class GrllNeuralEditor():
 
         agenda = self.editor.encoder.agenda_maker(source_embeds_final, edit_embed)
         return EncoderOutput(source_embeds, insert_embeds_exact, delete_embeds_exact, agenda)
+
+    def run_model(self, config_run_edit_model, dataloader, postprocessor):
+        """ Run the editor model previously saved as attribute
+
+        Args:
+            config_run_edit_model: a dictionary corresponding to the current config_run edit_model
+            dataloader: a data loader which generate the preprocessed data
+            postprocessor:
+
+        Returns:
+            results an instance of the GrllResult class with the results from running the model
+        """
+        logging.info("Editing the sentences and generating results.")
+
+        log_data = {  # A dictionary storing information about the model_run for logging purpose.
+            "batches_len": [],
+            "edit_traces_len": [],
+            "filtered_candidates_len": [],
+            "cum_results_len": []
+        }
+        results = GrllResults()  # a class to store the results from the model run.
+
+        for idx, (preprocessed_sentence, entities, original_sentence) in enumerate(
+                dataloader.generate_one_preprocessed_sample()):
+            sentence = Sentence(preprocessed_sentence.split(" "),
+                                entities=entities,
+                                original_sentence=original_sentence,
+                                preprocessed_sentence=preprocessed_sentence)
+
+            batch = [sentence] * config_run_edit_model["random_edit_vector_number"]
+
+            _, edit_traces = self.edit(batch)
+            filtered_candidates = postprocessor.postprocess_filter(edit_traces,
+                                                                   min_number_of_token=config_run_edit_model["min_number_of_token"])
+            results.add_candidates(filtered_candidates)
+
+            log_data["batches_len"].append(len(batch))
+            log_data["edit_traces_len"].append(len(edit_traces))
+            log_data["filtered_candidates_len"].append(len(filtered_candidates))
+            log_data["cum_results_len"].append(len(results))
+
+            if config_run_edit_model["max_iter"] is not None:
+                if idx == (config_run_edit_model["max_iter"] - 1):
+                    break
+
+        x = PrettyTable()  # logging the log_data in a prettytable.
+        x.field_names = ["batches_len", "edit_traces_len", "filtered_candidates_len", "cum_results_len"]
+        for batch_len, edit_trace_len, filtered_candidate_len, cum_result_len in zip(log_data["batches_len"],
+                                                                                     log_data["edit_traces_len"],
+                                                                                     log_data[
+                                                                                         "filtered_candidates_len"],
+                                                                                     log_data["cum_results_len"]):
+            x.add_row([batch_len, edit_trace_len, filtered_candidate_len, cum_result_len])
+        logging.info("\n" + x.get_string())
+        logging.info("{} filtered candidates were generated.".format(len(results)))
+
+        return results

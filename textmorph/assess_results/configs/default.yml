@@ -1,5 +1,4 @@
 global_config:
-  mode: "debug"                         # possible values: ["debug", "normal"]
   lang: "de"                            # possible values: ["de"]
 
   logger:
@@ -18,6 +17,8 @@ global_config:
   edit_model:
     exp_num: 12                         # the num of the experiment to load
     random_edit_vector_number: 5        # number of random edit vector to use
+    max_iter: 5                         # maximum number of iteration of the model on the samples: None for no limit.
+    min_number_of_token: 4              # the minimum number of token of a candidate sequence.
 
   generation:
     dataset_sizes:                      # list of sizes to try to generate
