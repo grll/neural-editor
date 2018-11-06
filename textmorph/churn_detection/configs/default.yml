@@ -1,0 +1,30 @@
+global_config:
+  lang: "de"                            # possible values: ["de"]
+
+  logger:
+    console_level: "INFO"
+    file_level: "DEBUG"
+
+  data_loader:
+    dataset_foldername: "CHURN_datasets"   # must be a valid folder in data.root (/data)
+    dataset_filename: "DE_swisscom_for_augmentation.csv"  # must be a valid filename in the dataset_folder
+    data_type: "csv"                    # possible values: ["csv"]
+    preprocess:
+      force: True                       # weather to force recomputing the preprocessing
+      show: True                        # weather to output the preprocessing results
+      filename: "preprocess_output.txt" # filename of the preprocess output *REQUIRED* when `show` is True
+
+  edit_model:
+    exp_num: 12                         # the num of the experiment to load
+    random_edit_vector_number: 5        # number of random edit vector to use
+    max_iter: 5                         # maximum number of iteration of the model on the samples: None for no limit.
+    min_number_of_token: 4              # the minimum number of token of a candidate sequence.
+
+  generation:
+    dataset_sizes:                      # list of sizes to try to generate
+      - 5
+      - 10
+      - 15
+
+runs_config:
+  - {}

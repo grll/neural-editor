@@ -23,7 +23,7 @@ workspace.add_dir('retriever_runs', 'retriever_runs')
 workspace.add_dir('assess_results_runs', 'assess_results_runs')
 
 # Churn Folder
-workspace.add_dir('churn_augmentation_runs', 'churn_augmenation_runs')
+workspace.add_dir('churn_augmentation_runs', 'churn_augmentation_runs')
 
 # user IDs
 workspace.add_file('user_ids', 'user_ids.json')
