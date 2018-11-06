@@ -5,9 +5,8 @@ from data_loader import GrllDataLoader
 from preprocess import GrllPreprocessor
 from postprocess import GrllPostprocessor
 from metrics import GrllMetrics
-from textmorph import data
-from gtd.io import Workspace, sub_dirs
-import re
+from gtd.io import Workspace
+from workspace import setup_exps_workspace
 from os.path import join
 from writter import GrllWritter
 from logger import logging_setup, config_run_logging_setup, handle_exception
@@ -24,14 +23,7 @@ sys.excepthook = handle_exception
 configs = GrllConfig()
 
 # Workspace setup
-exps_workspace = Workspace(data.workspace.assess_results_runs)
-if len(sub_dirs(exps_workspace.root)) == 0:
-    exp_folder_name = "exp_" + str(0)
-else:
-    exp_num = max([int(re.search('(\d+)$', sub_dir_path).group(0)) for sub_dir_path in sub_dirs(exps_workspace.root)]) + 1
-    exp_folder_name = "exp_"+str(exp_num)
-exps_workspace.add_dir(exp_folder_name, exp_folder_name)
-runs_workspace = Workspace(getattr(exps_workspace, exp_folder_name))
+runs_workspace = setup_exps_workspace("assess_results_runs")
 
 for idx, config_run in enumerate(configs):
     # 0. Setup the Config Run
