@@ -13,6 +13,7 @@ global_config:
     preprocess:
       force: True                       # weather to force recomputing the preprocessing
       show: True                        # weather to output the preprocessing results
+      filename: "preprocess_output.txt" # filename of the preprocess output *REQUIRED* when `show` is True
 
   edit_model:
     exp_num: 12                         # the num of the experiment to load
@@ -25,4 +26,4 @@ global_config:
       - 15
 
 runs_config:
-  -
+  - {}

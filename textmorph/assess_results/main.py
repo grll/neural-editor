@@ -64,7 +64,7 @@ for idx, config_run in enumerate(configs):
                                 config_run["data_loader"]["data_type"],
                                 preprocessor)
 
-    dataloader.preprocess_all(config_run["data_loader"]["force_preprocessing"])
+    dataloader.preprocess_all(config_run["data_loader"]["preprocess"]["force"])
 
     if config_run["data_loader"]["preprocess"]["show"]:  # write to file the output of the preprocessing phase
         file_path = join(run_workspace.root, config_run["data_loader"]["preprocess"]["filename"])
@@ -86,7 +86,7 @@ for idx, config_run in enumerate(configs):
                                 original_sentence=original_sentence,
                                 preprocessed_sentence=preprocessed_sentence)
 
-            batch = [sentence] * config_run["edition"]["number_of_edit_vector"]
+            batch = [sentence] * config_run["edit_model"]["random_edit_vector_number"]
             _, edit_traces = editor.edit(batch)
             filtered_candidates = postprocessor.postprocess_filter(edit_traces, min_number_of_token=4)
             results.add_candidates(filtered_candidates)
