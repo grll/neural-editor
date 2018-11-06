@@ -14,7 +14,7 @@ from logger import logging_setup, config_run_logging_setup, handle_exception
 import sys
 import logging
 
-#parse arg to the config file with default to default
+#TODO parse arg to the config file with default to default
 
 # basic logging setup
 logging_setup()
