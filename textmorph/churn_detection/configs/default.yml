@@ -37,8 +37,8 @@ runs_config:
         force: False
         show: False
     edit_model:
-      random_edit_vector: 100
-      max_iter: None
+      random_edit_vector_number: 100
+      max_iter:
     generation:
       dataset_sizes:
         - 100
@@ -48,15 +48,15 @@ runs_config:
         - 10000
   - logger:
       file_level: "INFO"
-      data_loader:
-        preprocess:
-          force: False
-          show: False
-      edit_model:
-        random_edit_vector: 200
-        max_iter: None
-      generation:
-        dataset_sizes:
+    data_loader:
+      preprocess:
+        force: False
+        show: False
+    edit_model:
+      random_edit_vector_number: 200
+      max_iter:
+    generation:
+      dataset_sizes:
         - 100
         - 500
         - 1000
@@ -64,15 +64,15 @@ runs_config:
         - 10000
   - logger:
       file_level: "INFO"
-      data_loader:
-        preprocess:
-          force: False
-          show: False
-      edit_model:
-        random_edit_vector: 300
-        max_iter: None
-      generation:
-        dataset_sizes:
+    data_loader:
+      preprocess:
+        force: False
+        show: False
+    edit_model:
+      random_edit_vector_number: 300
+      max_iter:
+    generation:
+      dataset_sizes:
         - 100
         - 500
         - 1000
@@ -80,15 +80,15 @@ runs_config:
         - 10000
   - logger:
       file_level: "INFO"
-      data_loader:
-        preprocess:
-          force: False
-          show: False
-      edit_model:
-        random_edit_vector: 400
-        max_iter: None
-      generation:
-        dataset_sizes:
+    data_loader:
+      preprocess:
+        force: False
+        show: False
+    edit_model:
+      random_edit_vector_number: 400
+      max_iter:
+    generation:
+      dataset_sizes:
         - 100
         - 500
         - 1000

@@ -67,6 +67,14 @@ for idx, config_run in enumerate(configs):
 
         file_path = join(run_workspace.root, "generated_"+str(len(generated_sentences))+".txt")
         GrllWritter.write(file_path, generated_sentences)
+        file_path = join(run_workspace.root, "generated_" + str(len(generated_sentences)) + ".csv")
+        new_data = []
+        for idx, (generated_sentence, d) in enumerate(zip(generated_sentences, original_data)):
+            dprime = d.copy()
+            dprime[u"id"] = idx
+            dprime[u"text_org"] = generated_sentence
+            new_data.append(dprime)
+        GrllWritter.write_csv(file_path, new_data, dataloader._headers)
 
     file_path = join(run_workspace.root, "metrics.txt")
     GrllWritter.write_pretty_metrics(file_path, metrics)

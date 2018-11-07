@@ -48,6 +48,19 @@ class GrllWritter():
             raise NotImplementedError
 
     @classmethod
+    def write_csv(cls, path, content, headers):
+        with open(path, "wb") as f:
+            f.write("\t".join(headers).encode("utf8") + "\n")
+            for d in content:
+                values = []
+                for header in headers:
+                    if header == u"id":
+                        values.append("{:018d}".format(d[header]))
+                    else:
+                        values.append(d[header].encode("utf8"))
+                f.write("\t".join(values) + "\n")
+
+    @classmethod
     def write_pretty_metrics(cls, path, metrics):
         x = PrettyTable()
         x.field_names = list(metrics[0].keys())
