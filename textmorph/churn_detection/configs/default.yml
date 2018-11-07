@@ -9,6 +9,8 @@ global_config:
     dataset_foldername: "CHURN_datasets"   # must be a valid folder in data.root (/data)
     dataset_filename: "DE_swisscom_for_augmentation.csv"  # must be a valid filename in the dataset_folder
     data_type: "csv"                    # possible values: ["csv"]
+    training_size: 200                  # size of the training set to work with (the dataloader will generate a dataset accordingly)
+    random_seed: 7                      # random seed to use for training set generation
     preprocess:
       force: True                       # weather to force recomputing the preprocessing
       show: True                        # weather to output the preprocessing results
@@ -27,4 +29,68 @@ global_config:
       - 15
 
 runs_config:
-  - {}
+  - {} # first fast run with default settings
+  - logger:
+      file_level: "INFO"
+    data_loader:
+      preprocess:
+        force: False
+        show: False
+    edit_model:
+      random_edit_vector: 100
+      max_iter: None
+    generation:
+      dataset_sizes:
+        - 100
+        - 500
+        - 1000
+        - 5000
+        - 10000
+  - logger:
+      file_level: "INFO"
+      data_loader:
+        preprocess:
+          force: False
+          show: False
+      edit_model:
+        random_edit_vector: 200
+        max_iter: None
+      generation:
+        dataset_sizes:
+        - 100
+        - 500
+        - 1000
+        - 5000
+        - 10000
+  - logger:
+      file_level: "INFO"
+      data_loader:
+        preprocess:
+          force: False
+          show: False
+      edit_model:
+        random_edit_vector: 300
+        max_iter: None
+      generation:
+        dataset_sizes:
+        - 100
+        - 500
+        - 1000
+        - 5000
+        - 10000
+  - logger:
+      file_level: "INFO"
+      data_loader:
+        preprocess:
+          force: False
+          show: False
+      edit_model:
+        random_edit_vector: 400
+        max_iter: None
+      generation:
+        dataset_sizes:
+        - 100
+        - 500
+        - 1000
+        - 5000
+        - 10000

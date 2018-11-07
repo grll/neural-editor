@@ -1,9 +1,9 @@
 from textmorph.assess_results.training_run import MyEditTrainingRuns
-from textmorph.assess_results.editor import GrllNeuralEditor
+from editor import ChurnNeuralEditor
 from textmorph.assess_results.config import GrllConfig
 from data_loader import ChurnDataLoader
-from textmorph.assess_results.preprocess import GrllPreprocessor
-from textmorph.assess_results.postprocess import GrllPostprocessor
+from preprocess import ChurnPreprocessor
+from postprocess import ChurnPostProcessor
 from textmorph.assess_results.metrics import GrllMetrics
 from textmorph.assess_results.workspace import setup_exps_workspace
 from textmorph.assess_results.writter import GrllWritter
@@ -11,7 +11,7 @@ from textmorph.assess_results.logger import logging_setup, config_run_logging_se
 
 from gtd.io import Workspace
 
-from os.path import join
+from os.path import join, dirname, abspath
 import sys
 import logging
 
@@ -22,7 +22,7 @@ logging_setup()
 sys.excepthook = handle_exception
 
 # Loading the Configs
-configs = GrllConfig()
+configs = GrllConfig(join(dirname(abspath(__file__)), "configs/default.yml"))
 
 # Workspace setup
 runs_workspace = setup_exps_workspace("churn_augmentation_runs")
@@ -38,31 +38,28 @@ for idx, config_run in enumerate(configs):
 
     # 1. Loading the model
     edit_model = MyEditTrainingRuns().load_edit_model(config_.edit_model.exp_num)  # load the edit_model.
-    editor = GrllNeuralEditor(edit_model)  # create custom editor with random edition vectors function.
+    editor = ChurnNeuralEditor(edit_model)  # create custom editor with random edition vectors function.
     word_vocab = edit_model.train_decoder.word_vocab  # load the word vocabulary used with this specific edit_model.
 
     # 2. Preprocessing & data loading
-    preprocessor = GrllPreprocessor(word_vocab=word_vocab, lang=config_.lang)
-    dataloader = GrllDataLoader(config_.data_loader.dataset_foldername,
-                                config_.data_loader.dataset_filename,
-                                config_.data_loader.data_type,
-                                preprocessor)
+    preprocessor = ChurnPreprocessor(word_vocab=word_vocab, lang=config_.lang)
+    dataloader = ChurnDataLoader(config_.data_loader, preprocessor)
     dataloader.preprocess_all(config_.data_loader.preprocess.force)  # preprocess all or retrieve from file
     if config_.data_loader.preprocess.show:  # write to file the output of the preprocessing phase
         file_path = join(run_workspace.root, config_.data_loader.preprocess.filename)
-        GrllWritter.write_preprocessed_samples(file_path, dataloader.generate_one_preprocessed_sample())
+        dataloader.write_preprocessed_samples(file_path)
 
     # 3. Running the model with preprocessed data
-    postprocessor = GrllPostprocessor()
+    postprocessor = ChurnPostProcessor()
     results = editor.run_model(config_.edit_model, dataloader, postprocessor)
     results.sort()
 
     # 4. Generate the Datasets & Metrics
     metrics = []
     for dataset_size in config_.generation.dataset_sizes:
-        generated_sentences, original_sentences = postprocessor.generate_n_sentences(results, n=dataset_size)
+        generated_sentences, original_data = postprocessor.generate_n_sentences(results, n=dataset_size)
 
-        bleu_score = GrllMetrics.compute_bleu_score(generated_sentences, original_sentences)
+        bleu_score = GrllMetrics.compute_bleu_score(generated_sentences, [d[u"text_org"] for d in original_data])
         perplexity = GrllMetrics.compute_perplexity([result["prob"] for result in results[:dataset_size]],
                                                     [len(result["sequence"]) for result in results[:dataset_size]])
 
